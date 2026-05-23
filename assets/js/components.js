@@ -3,7 +3,7 @@
  * Injects shared navigation, footer, CTA, newsletter, and contact form blocks.
  */
 
-import { BRAND } from './brand.js';
+import { BRAND, HOME_SERVICES } from './brand.js';
 
 const SITE = {
   name: BRAND.name,
@@ -16,12 +16,11 @@ const SITE = {
 
 const NAV_LINKS = [
   { href: 'index.html', label: 'Home' },
-  { href: 'services.html', label: 'Services' },
-  { href: 'projects.html', label: 'Projects' },
-  { href: 'process.html', label: 'Process' },
+  { href: 'services.html', label: 'What We Do' },
+  { href: 'process.html', label: 'How We Work' },
+  { href: 'projects.html', label: 'Work' },
   { href: 'about.html', label: 'About' },
   { href: 'blog.html', label: 'Insights' },
-  { href: 'careers.html', label: 'Careers' },
   { href: 'contact.html', label: 'Contact' },
 ];
 
@@ -53,6 +52,10 @@ const ICONS = {
   refresh: '<path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/>',
   brand: '<path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/>',
   search: '<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>',
+  rocket: '<path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.63 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>',
+  wrench: '<path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.016-.071 2.127-.704 2.988z"/>',
+  'arrow-up': '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"/>',
+  clipboard: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c1.07.013 2.008.714 2.007 1.916a48.422 48.422 0 01-1.122.08m-5.801 0c-.98.02-1.976.925-1.976 2.192v9.75A2.25 2.25 0 007.5 21h3.75m0-16.5h-3.75m9.75 0H21m-9.75 0v16.5m0-16.5v-3A2.25 2.25 0 0018 2.25h-3.75"/>',
 };
 
 function svgIcon(name, className = 'h-6 w-6') {
@@ -98,7 +101,7 @@ export function renderNavbar() {
             <svg class="h-5 w-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>
             <svg class="h-5 w-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
           </button>
-          <a href="contact.html" class="btn-primary btn-magnetic hidden !py-2.5 !text-xs sm:inline-flex" data-magnetic>Start a project</a>
+          <a href="contact.html" class="btn-primary btn-magnetic hidden !py-2.5 !text-xs sm:inline-flex" data-magnetic>Start with Clarity</a>
           <button type="button" id="mobile-menu-btn" class="btn-ghost !p-2 lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M3.75 9h16.5m-16.5 6.75h16.5"/></svg>
           </button>
@@ -106,7 +109,7 @@ export function renderNavbar() {
       </nav>
       <div id="mobile-menu" class="nav-glass hidden border-t border-[var(--color-border)] lg:hidden" aria-hidden="true">
         <div class="container-wide space-y-1 py-4">${mobileLinks}
-          <a href="contact.html" class="btn-primary mt-4 w-full">Start a project</a>
+          <a href="contact.html" class="btn-primary mt-4 w-full">Start with Clarity</a>
         </div>
       </div>
     </header>
@@ -115,9 +118,9 @@ export function renderNavbar() {
 
 export function renderFooter() {
   const year = new Date().getFullYear();
-  const serviceLinks = SERVICES.slice(0, 6)
-    .map((s) => `<li><a href="services.html" class="text-sm text-[var(--color-text-muted)] transition-colors hover:text-brand">${s.title}</a></li>`)
-    .join('');
+  const serviceLinks = HOME_SERVICES.map(
+    (s) => `<li><a href="services.html" class="text-sm text-[var(--color-text-muted)] transition-colors hover:text-brand">${s.title}</a></li>`
+  ).join('');
 
   return `
     <footer class="border-t border-[var(--color-border)] bg-[var(--color-bg-elevated)]" role="contentinfo">
@@ -134,8 +137,8 @@ export function renderFooter() {
               <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)]">Company</h3>
               <ul class="mt-4 space-y-3">
                 <li><a href="about.html" class="text-sm text-muted hover:text-brand">About</a></li>
-                <li><a href="process.html" class="text-sm text-muted hover:text-brand">Process</a></li>
-                <li><a href="projects.html" class="text-sm text-muted hover:text-brand">Projects</a></li>
+                <li><a href="process.html" class="text-sm text-muted hover:text-brand">How We Work</a></li>
+                <li><a href="projects.html" class="text-sm text-muted hover:text-brand">Work</a></li>
                 <li><a href="careers.html" class="text-sm text-muted hover:text-brand">Careers</a></li>
                 <li><a href="blog.html" class="text-sm text-muted hover:text-brand">Insights</a></li>
                 <li><a href="contact.html" class="text-sm text-muted hover:text-brand">Contact</a></li>
@@ -173,12 +176,12 @@ export function renderFooter() {
 }
 
 export function renderCTA({
-  title = 'Ready to build something unbeatable?',
-  subtitle = 'Tell us where you are today. We will design the technology path to where you need to be.',
+  title = 'Ready to build something purposeful?',
+  subtitle = 'Whether you are improving an existing business, launching a new product, or rethinking your digital systems, DSYNZ can help you start with clarity and build for growth.',
   primaryHref = 'contact.html',
-  primaryLabel = 'Start a conversation',
-  secondaryHref = 'process.html',
-  secondaryLabel = 'See our process',
+  primaryLabel = 'Start with Clarity',
+  secondaryHref = 'contact.html',
+  secondaryLabel = 'Talk to DSYNZ',
 } = {}) {
   return `
     <section class="section-padding" aria-labelledby="cta-heading" data-section>
@@ -277,41 +280,26 @@ export function renderServiceCard(service, index = 0) {
 
 const CASE_STUDIES = [
   {
-    slug: 'novapay',
-    industry: 'Fintech',
-    title: 'NovaPay — Unified payments platform',
-    desc: 'Enterprise-grade payment infrastructure rebuilt for latency, compliance, and global scale.',
-    metric: '62%',
-    metricLabel: 'latency reduction',
-    stack: ['TypeScript', 'Node.js', 'AWS', 'PostgreSQL'],
-    before: 'Fragmented legacy rails',
-    after: 'Unified real-time core',
+    slug: 'platforms',
+    industry: 'Platforms',
+    title: 'Custom Platforms',
+    desc: 'SaaS products, portals, dashboards, and workflow systems built around business needs.',
     featured: true,
     span: 8,
   },
   {
-    slug: 'helix',
-    industry: 'Healthcare',
-    title: 'Helix Health — Patient experience',
-    desc: 'HIPAA-aligned portal serving 200k+ patients with measurable engagement lift.',
-    metric: '3.2×',
-    metricLabel: 'portal adoption',
-    stack: ['React', 'React Native', 'GCP'],
-    before: 'Siloed patient data',
-    after: 'Connected care journey',
+    slug: 'websites',
+    industry: 'Websites',
+    title: 'Business Websites',
+    desc: 'Websites designed to communicate value, improve credibility, and support growth.',
     featured: false,
     span: 4,
   },
   {
-    slug: 'axiom',
-    industry: 'AI / Enterprise',
-    title: 'Axiom AI — Operations copilot',
-    desc: 'Custom LLM workflows embedded in support ops with governance and observability.',
-    metric: '40%',
-    metricLabel: 'ticket automation',
-    stack: ['Python', 'OpenAI', 'Kubernetes'],
-    before: 'Manual triage queues',
-    after: 'Intelligent resolution',
+    slug: 'systems',
+    industry: 'Systems',
+    title: 'Digital Systems',
+    desc: 'Automation, integrations, reporting tools, and internal systems that improve operations.',
     featured: false,
     span: 4,
   },
@@ -376,26 +364,15 @@ export function renderCaseStudyCard(project, index = 0) {
       <a href="projects.html" class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-3xl">
         <div class="case-thumb ${thumbAspect}">
           <div class="case-thumb-bg" aria-hidden="true"></div>
-          <div class="absolute inset-0 flex items-end justify-between p-6 md:p-8">
+          <div class="absolute inset-0 flex items-end p-6 md:p-8">
             <span class="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-md">${project.industry}</span>
-            <div class="text-right">
-              <p class="case-metric">${project.metric}</p>
-              <p class="text-[10px] uppercase tracking-wider text-white/70">${project.metricLabel}</p>
-            </div>
           </div>
         </div>
         <div class="p-6 md:p-8">
           <h3 class="text-xl font-semibold tracking-tight text-[var(--color-text)] transition-colors group-hover:text-brand md:text-2xl">${project.title}</h3>
           <p class="mt-3 text-sm leading-relaxed text-muted">${project.desc}</p>
-          <div class="case-before-after mt-6" aria-label="Transformation">
-            <span>${project.before}</span>
-            <span class="is-after">${project.after}</span>
-          </div>
-          <div class="mt-6 flex flex-wrap gap-2" role="list" aria-label="Technology stack">
-            ${project.stack.map((t) => `<span class="case-stack-tag" role="listitem">${t}</span>`).join('')}
-          </div>
           <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brand">
-            View case study
+            Learn more
             <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </span>
         </div>
@@ -539,6 +516,7 @@ export function renderPageLoader() {
 export {
   SITE,
   SERVICES,
+  ICONS,
   svgIcon,
   NAV_LINKS,
   CASE_STUDIES,

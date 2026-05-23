@@ -1,5 +1,5 @@
 /**
- * DSYNZ SEO Helper — structured data & meta utilities
+ * DSYNZ SEO Helper â€” structured data & meta utilities
  */
 
 const DSYNZ_ORG = {
@@ -24,11 +24,11 @@ const DSYNZ_ORG = {
   },
   areaServed: 'Worldwide',
   knowsAbout: [
-    'Software Development',
-    'Artificial Intelligence',
-    'UI/UX Design',
-    'Digital Transformation',
-    'Cloud Computing',
+    'Business Strategy',
+    'Product Design',
+    'Web Application Development',
+    'Mobile App Development',
+    'Digital Solutions',
   ],
 };
 
@@ -158,10 +158,10 @@ export function initDefaultSchema(pageType = 'home') {
         '@type': 'OfferCatalog',
         name: 'Technology Services',
         itemListElement: [
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Custom Software Development' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'AI Solutions' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'UI/UX Design' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Digital Transformation' } },
+          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Business Strategy & Consulting' } },
+          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Web Application Development' } },
+          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Mobile App Development' } },
+          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Website Design & Development' } },
         ],
       },
     });

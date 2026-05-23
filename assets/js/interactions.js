@@ -1,10 +1,10 @@
 /**
  * DSYNZ — Interactive section behaviors
  */
-import { SERVICES } from './components.js';
+import { HOME_SERVICES } from './brand.js';
 import { renderServiceStagePanel } from './sections.js';
 
-const HERO_SERVICES = SERVICES.slice(0, 6);
+const HERO_SERVICES = HOME_SERVICES;
 
 export function initFAQ() {
   document.querySelectorAll('[data-faq-item]').forEach((item) => {

@@ -72,24 +72,31 @@ function initCinematicHero() {
   const lines = document.querySelectorAll('.hero-copy [data-hero-line]');
   const headlineLines = document.querySelectorAll('.hero-line');
   const visual = document.querySelector('[data-hero-visual]');
-  const pillars = document.querySelector('.hero-pillars');
+  const bridge = document.querySelector('.hero-bridge');
 
   if (prefersReducedMotion) return;
 
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.15 });
 
   if (headlineLines.length) {
-    tl.from(headlineLines, { y: 48, opacity: 0, duration: 1, stagger: 0.12 });
+    tl.from(headlineLines, { y: 36, opacity: 0, duration: 0.9, stagger: 0.1 });
   }
 
-  tl.from(lines, { y: 28, opacity: 0, duration: 0.85, stagger: 0.1 }, '-=0.55');
+  tl.from(lines, { y: 22, opacity: 0, duration: 0.75, stagger: 0.08 }, '-=0.5');
 
   if (visual) {
     tl.from(visual, { y: 24, opacity: 0, duration: 1 }, '-=0.6');
   }
 
-  if (pillars) {
-    tl.from(pillars.children, { y: 20, opacity: 0, duration: 0.7, stagger: 0.08 }, '-=0.4');
+  if (bridge) {
+    gsap.from(bridge.querySelectorAll('.reveal'), {
+      y: 24,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: bridge, start: 'top 88%', once: true },
+    });
   }
 
   document.querySelectorAll('[data-parallax]').forEach((el) => {

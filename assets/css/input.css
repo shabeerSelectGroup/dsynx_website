@@ -790,9 +790,9 @@
 /* Critical elite overrides (unlayered � must load after Tailwind layers) */
 .hero-headline {
   font-family: 'Archivo Black', system-ui, sans-serif;
-  font-size: clamp(3rem, 8vw + 1rem, 6.5rem);
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+  font-size: clamp(2.5rem, 4.2vw + 0.85rem, 4.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
 }
 
 .case-grid {
