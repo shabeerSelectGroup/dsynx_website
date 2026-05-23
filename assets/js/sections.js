@@ -1,19 +1,16 @@
 /**
  * DSYNZ — Modular page sections (home + shared blocks)
  */
+import { BRAND, PILLARS, PROCESS_STEPS, TECH_STACK, CLIENT_MARKS } from './brand.js';
 import {
-  BRAND,
-  CTAS,
-  HERO_HIGHLIGHTS,
-  PROBLEM_CARDS,
-  HOME_SERVICES,
-  GROWTH_LOOP_STEPS,
-  AUDIENCE_TAGS,
-  WHY_DSYNZ_CARDS,
-  IMPACT_QUESTIONS,
-  WORK_PREVIEW_CARDS,
-} from './brand.js';
-import { svgIcon } from './components.js';
+  svgIcon,
+  SERVICES,
+  CASE_STUDIES,
+  ENGAGEMENT_MODELS,
+  FAQ_ITEMS,
+} from './components.js';
+
+const HERO_SERVICES = SERVICES.slice(0, 6);
 
 export function renderParticles() {
   return Array.from({ length: 18 }, (_, i) => `<span class="particle" style="--i:${i}" aria-hidden="true"></span>`).join('');
@@ -21,7 +18,7 @@ export function renderParticles() {
 
 export function renderScrollIndicator() {
   return `
-    <a href="#problem" class="scroll-indicator" aria-label="Scroll to explore">
+    <a href="#manifesto" class="scroll-indicator" aria-label="Scroll to explore">
       <span class="scroll-indicator-text">Explore</span>
       <span class="scroll-indicator-line" aria-hidden="true"></span>
     </a>
@@ -51,12 +48,34 @@ export function renderPageHero({ eyebrow, title, lead }) {
   `;
 }
 
-function renderContentCard({ title, text }, index = 0) {
+function renderServiceStageItem(service, index, active = false) {
   return `
-    <article class="content-card reveal" data-stagger="${index}">
-      <h3 class="content-card-title">${title}</h3>
-      <p class="content-card-text">${text}</p>
-    </article>
+    <button type="button" class="service-stage-item ${active ? 'is-active' : ''}" data-service-index="${index}" aria-expanded="${active}">
+      <span class="service-stage-index">${String(index + 1).padStart(2, '0')}</span>
+      <span class="service-stage-icon">${svgIcon(service.icon, 'h-5 w-5')}</span>
+      <span class="service-stage-label">${service.title}</span>
+    </button>
+  `;
+}
+
+export function renderServiceStagePanel(service) {
+  return `
+    <div class="service-stage-panel-inner">
+      <div class="service-stage-visual" aria-hidden="true">
+        <div class="service-stage-ring"></div>
+        <div class="service-stage-glyph">${svgIcon(service.icon, 'h-16 w-16')}</div>
+        <div class="service-stage-grid"></div>
+      </div>
+      <p class="eyebrow">Capability</p>
+      <h3 class="heading-section mt-4 text-[var(--color-text)]">${service.title}</h3>
+      <p class="mt-5 text-lead text-muted max-w-lg">${service.desc}</p>
+      <ul class="mt-8 flex flex-wrap gap-2" aria-label="Outcomes">
+        <li class="tag-pill">Strategy-led</li>
+        <li class="tag-pill">Enterprise-ready</li>
+        <li class="tag-pill">Measurable ROI</li>
+      </ul>
+      <a href="services.html" class="btn-primary btn-magnetic mt-10" data-magnetic>Explore ${service.title}</a>
+    </div>
   `;
 }
 
@@ -73,34 +92,39 @@ export function renderHomeHero() {
       <div class="container-wide hero-cinematic-content">
         <div class="hero-layout" data-hero-title>
           <div class="hero-copy">
-            <p class="brand-pill" data-hero-line><span>${BRAND.eyebrow}</span></p>
+            <p class="brand-pill" data-hero-line><span>${BRAND.name}</span> Strategic Technology Partner</p>
             <h1 id="hero-heading" class="hero-headline" data-hero-line>
-              <span class="hero-line">From clarity to growth,</span>
-              <span class="hero-line hero-line-accent">we design technology that helps businesses become unbeatable.</span>
+              <span class="hero-line">We engineer</span>
+              <span class="hero-line hero-line-accent">digital dominance.</span>
             </h1>
-            <p class="hero-subline" data-hero-line>${BRAND.descriptor} We help ambitious people and companies clarify ideas, design purposeful digital products, and build systems that create real business value.</p>
+            <p class="hero-subline" data-hero-line>${BRAND.descriptor}</p>
             <div class="hero-actions" data-hero-line>
-              <a href="${CTAS.primary.href}" class="btn-primary btn-magnetic" data-magnetic>${CTAS.primary.label}</a>
-              <a href="${CTAS.secondary.href}" class="btn-secondary btn-magnetic" data-magnetic>${CTAS.secondary.label}</a>
+              <a href="contact.html" class="btn-primary btn-magnetic" data-magnetic>Start a strategic engagement</a>
+              <a href="projects.html" class="btn-secondary btn-magnetic" data-magnetic>View transformations</a>
             </div>
-            <p class="hero-credibility" data-hero-line>Established in ${BRAND.established}. Designing purposeful digital solutions for ${BRAND.experience} years.</p>
+            <div class="hero-metrics-inline" aria-label="Key metrics">
+              <div class="hero-metric-pill"><span class="hero-metric-dot" aria-hidden="true"></span> Systems operational</div>
+              <div class="hero-metric-pill"><span class="font-display text-brand">98%</span> client retention</div>
+            </div>
           </div>
           <aside class="hero-aside" aria-hidden="true">
-            <div class="hero-highlight-panel" data-hero-visual>
-              <div class="hero-highlight-stack">
-                ${HERO_HIGHLIGHTS.map(
-                  (h, i) => `
-                  <div class="hero-highlight-card" style="--i:${i}">
-                    <p class="hero-highlight-label">${h.label}</p>
-                    <p class="hero-highlight-desc">${h.desc}</p>
-                  </div>`
-                ).join('')}
+            <div class="hero-architecture" data-hero-visual>
+              <div class="hero-arch-layer hero-arch-layer-1"></div>
+              <div class="hero-arch-layer hero-arch-layer-2"></div>
+              <div class="hero-arch-core">
+                <span class="hero-arch-label">Platform status</span>
+                <span class="hero-arch-value">Operational</span>
+                <div class="hero-arch-bar"><span style="width:82%"></span></div>
+              </div>
+              <div class="hero-arch-stat">
+                <span class="font-display text-brand">98%</span>
+                <span class="hero-arch-stat-label">Retention</span>
               </div>
             </div>
           </aside>
         </div>
         <div class="hero-pillars">
-          ${HERO_HIGHLIGHTS.map(
+          ${PILLARS.map(
             (p) => `
             <div class="hero-pillar">
               <p class="hero-pillar-label">${p.label}</p>
@@ -114,193 +138,126 @@ export function renderHomeHero() {
   `;
 }
 
-export function renderProblemSection() {
+export function renderManifesto() {
   return `
-    <section id="problem" class="section-editorial" aria-labelledby="problem-heading" data-section>
+    <section id="manifesto" class="section-editorial" aria-labelledby="manifesto-heading" data-section>
       <div class="container-wide">
         <div class="grid-12 editorial-split">
           <div class="col-12 lg:col-5 lg:sticky lg:top-32 lg:self-start reveal">
-            <p class="eyebrow">The challenge</p>
-            <h2 id="problem-heading" class="heading-section mt-5 max-w-2xl text-balance">Most businesses do not need more technology. They need better direction.</h2>
+            <p class="eyebrow">Position</p>
+            <h2 id="manifesto-heading" class="heading-section mt-5 max-w-2xl text-balance">Not a vendor.<br />A strategic force multiplier.</h2>
           </div>
-          <div class="col-12 lg:col-6 lg:col-start-7 space-y-8 reveal">
-            <p class="text-editorial">Websites, apps, platforms, and systems often fail because they are built without clarity.</p>
-            <p class="text-editorial text-muted">The result is wasted money, confused teams, poor adoption, and digital tools that do not support growth.</p>
-            <p class="text-editorial">At DSYNZ, we start before development. We understand the business, define the problem, and design technology with purpose.</p>
+          <div class="col-12 lg:col-6 lg:col-start-7 space-y-10 reveal">
+            <p class="text-editorial">DSYNZ exists where boardroom strategy meets world-class execution — helping ambitious organizations modernize, scale, and win in markets defined by software.</p>
+            <p class="text-editorial text-muted">We are architects of clarity: aligning product, engineering, design, and intelligence into one accountable motion. The result is technology that compounds — never fragments.</p>
+            <div class="flex flex-wrap gap-3 pt-4">
+              <a href="about.html" class="btn-ghost">Our philosophy</a>
+              <a href="process.html" class="btn-secondary btn-magnetic" data-magnetic>See methodology</a>
+            </div>
           </div>
-        </div>
-        <div class="content-card-grid mt-20" role="list">
-          ${PROBLEM_CARDS.map((card, i) => `<div role="listitem">${renderContentCard(card, i)}</div>`).join('')}
         </div>
       </div>
     </section>
   `;
 }
 
-export function renderPositioningSection() {
+export function renderTrustStrip() {
+  const marks = [...CLIENT_MARKS, ...CLIENT_MARKS]
+    .map((m) => `<span class="logo-item">${m}</span>`)
+    .join('');
   return `
-    <section id="positioning" class="section-editorial bg-elevated" aria-labelledby="positioning-heading" data-section>
-      <div class="section-glow" aria-hidden="true"></div>
-      <div class="container-wide relative z-10">
-        <div class="grid-12 editorial-split">
-          <div class="col-12 lg:col-5 reveal">
-            <p class="eyebrow">Our approach</p>
-            <h2 id="positioning-heading" class="heading-section mt-5 text-balance">Not just design. Not just development. Purposeful creation.</h2>
-          </div>
-          <div class="col-12 lg:col-6 lg:col-start-7 space-y-8 reveal">
-            <p class="text-editorial">DSYNZ may sound like "designs," but for us, design means more than visuals.</p>
-            <p class="text-editorial text-muted">It means creating with purpose. It means shaping ideas, products, services, systems, and digital experiences that help businesses become stronger.</p>
-            <p class="text-editorial">We combine business clarity, product thinking, design, and technology to build solutions that are practical, scalable, and growth-focused.</p>
-            <p class="highlight-line reveal">We do not just build what is requested. We help you understand what should be built, why it matters, and how it can create value.</p>
-          </div>
-        </div>
+    <div class="trust-strip" role="region" aria-label="Trusted by leading organizations">
+      <div class="trust-strip-inner">
+        <p class="trust-strip-label">Trusted by teams building category leaders</p>
+        <div class="logo-marquee-wrap"><div class="logo-marquee">${marks}</div></div>
       </div>
-    </section>
+      <div class="container-wide trust-metrics" aria-label="Impact metrics">
+        <div class="trust-metric reveal"><p class="stat-value" data-stat="120" data-suffix="+">120+</p><p class="stat-label">Deliveries</p></div>
+        <div class="trust-metric reveal"><p class="stat-value" data-stat="98" data-suffix="%">98%</p><p class="stat-label">Retention</p></div>
+        <div class="trust-metric reveal"><p class="stat-value" data-stat="240" data-suffix="M+">240M+</p><p class="stat-label">Transactions enabled</p></div>
+        <div class="trust-metric reveal"><p class="stat-value" data-stat="15" data-suffix="+">15+</p><p class="stat-label">Industries</p></div>
+      </div>
+    </div>
   `;
 }
 
-export function renderWhatWeDo() {
+export function renderServiceExperience() {
+  const first = HERO_SERVICES[0];
   return `
     <section class="section-editorial section-services" aria-labelledby="services-heading" data-section>
       <div class="section-glow" aria-hidden="true"></div>
       <div class="container-wide relative z-10">
         <div class="grid-12 items-end gap-y-8 reveal">
           <div class="col-12 lg:col-7">
-            <p class="eyebrow">What we do</p>
-            <h2 id="services-heading" class="heading-section mt-5 text-balance">Digital products and solutions built for business growth.</h2>
+            <p class="eyebrow">Strategic services</p>
+            <h2 id="services-heading" class="heading-section mt-5 text-balance">Capabilities engineered for market leadership</h2>
           </div>
-          <p class="col-12 lg:col-5 text-lead text-muted lg:text-right lg:ml-auto max-w-md">We help growing businesses move from unclear ideas and disconnected systems to purposeful technology that supports real progress.</p>
+          <p class="col-12 lg:col-5 text-lead text-muted lg:text-right lg:ml-auto max-w-md">Interactive exploration of how we design, build, and scale technology that wins.</p>
         </div>
-        <div class="services-track mt-16" role="list" aria-label="Services">
-          ${HOME_SERVICES.map((s, i) => `
+        <div class="service-stage mt-20 reveal" data-service-stage>
+          <div class="service-stage-nav" role="tablist" aria-label="Service capabilities">
+            ${HERO_SERVICES.map((s, i) => renderServiceStageItem(s, i, i === 0)).join('')}
+          </div>
+          <div class="service-stage-detail" data-service-panel role="tabpanel">
+            ${renderServiceStagePanel(first)}
+          </div>
+        </div>
+        <div class="services-track mt-16" role="list" aria-label="All capabilities">
+          ${HERO_SERVICES.map((s, i) => `
             <article class="service-card" data-stagger="${i}" role="listitem">
               <div class="service-card-body">
                 <div class="service-icon">${svgIcon(s.icon, 'h-5 w-5')}</div>
                 <h3 class="service-card-title">${s.title}</h3>
                 <p class="service-card-desc">${s.desc}</p>
               </div>
-              <a href="services.html" class="service-card-link">Learn more</a>
+              <a href="services.html" class="service-card-link">Explore capabilities</a>
             </article>`).join('')}
-        </div>
-        <div class="mt-12 text-center reveal">
-          <a href="services.html" class="btn-ghost">View all services</a>
         </div>
       </div>
     </section>
   `;
 }
 
-function renderGrowthLoopPanels() {
-  return GROWTH_LOOP_STEPS.map(
+export function renderProcessStory() {
+  const panels = PROCESS_STEPS.map(
     (step, i) => `
-    <article class="process-panel ${i === 0 ? 'is-active' : ''}" data-process-panel="${i}" id="growth-panel-${i}" ${i === 0 ? '' : 'hidden'}>
+    <article class="process-panel ${i === 0 ? 'is-active' : ''}" data-process-panel="${i}" id="process-panel-${i}" ${i === 0 ? '' : 'hidden'}>
       <p class="font-mono text-sm text-brand">${step.phase}</p>
-      <h3 class="heading-section mt-4 text-[var(--color-text)]">${step.title}</h3>
+      <h3 class="heading-section mt-4 text-[var(--color-text)]">${step.headline}</h3>
       <p class="mt-6 text-lead text-muted">${step.body}</p>
+      <ul class="mt-8 space-y-2">
+        ${step.deliverables.map((d) => `<li class="tag-pill">${d}</li>`).join('')}
+      </ul>
     </article>`
   ).join('');
-}
 
-function renderGrowthLoopNav() {
-  return GROWTH_LOOP_STEPS.map(
+  const nav = PROCESS_STEPS.map(
     (step, i) => `
     <button type="button" class="process-nav-item ${i === 0 ? 'is-active' : ''}" data-process-nav="${i}">
       <span class="process-nav-phase">${step.phase}</span>
       <span class="process-nav-title">${step.title}</span>
     </button>`
   ).join('');
-}
 
-export function renderGrowthLoop() {
   return `
-    <section class="section-process" aria-labelledby="growth-loop-heading" data-section data-process-story>
+    <section class="section-process" aria-labelledby="process-heading" data-section data-process-story>
       <div class="container-wide">
         <div class="grid-12 reveal">
-          <div class="col-12 lg:col-6">
-            <p class="eyebrow">How we work</p>
-            <h2 id="growth-loop-heading" class="heading-section mt-5">Our process does not end at launch.</h2>
-            <p class="mt-6 text-lead text-muted max-w-xl">We follow a strategy-led growth loop designed to clarify, create, launch, improve, and scale purposeful digital solutions.</p>
+          <div class="col-12 lg:col-4">
+            <p class="eyebrow">Methodology</p>
+            <h2 id="process-heading" class="heading-section mt-5">Scroll through certainty</h2>
+            <p class="mt-6 text-muted max-w-sm">A cinematic delivery framework — transparent, executive-ready, and built for enterprise governance.</p>
           </div>
         </div>
         <div class="process-story mt-16 grid-12">
           <div class="col-12 lg:col-4">
             <div class="process-story-pin">
-              <nav class="process-nav" aria-label="Growth loop steps">${renderGrowthLoopNav()}</nav>
+              <nav class="process-nav" aria-label="Process phases">${nav}</nav>
               <div class="process-progress" aria-hidden="true"><span class="process-progress-bar" data-process-progress></span></div>
             </div>
           </div>
           <div class="col-12 lg:col-7 lg:col-start-6">
-            <div class="process-panels" data-process-panels>${renderGrowthLoopPanels()}</div>
-          </div>
-        </div>
-        <p class="growth-loop-closing mt-16 text-center font-mono text-sm uppercase tracking-[0.2em] text-brand reveal">Assess → Blueprint → Create → Deploy → Evaluate → Fix → Grow</p>
-      </div>
-    </section>
-  `;
-}
-
-export function renderWhoWeHelp() {
-  return `
-    <section class="section-editorial" aria-labelledby="audience-heading" data-section>
-      <div class="container-wide">
-        <div class="grid-12 editorial-split items-end">
-          <div class="col-12 lg:col-5 reveal">
-            <p class="eyebrow">Who we help</p>
-            <h2 id="audience-heading" class="heading-section mt-5 text-balance">Built for ambitious businesses ready to grow.</h2>
-          </div>
-          <div class="col-12 lg:col-6 lg:col-start-7 space-y-6 reveal">
-            <p class="text-editorial">DSYNZ works with SMBs, startups, family businesses, service companies, and eCommerce brands that want to use technology with more clarity and confidence.</p>
-            <p class="text-editorial text-muted">We are industry-flexible, but growth-focused. The right client is not defined only by size or sector. It is defined by ambition.</p>
-            <p class="highlight-line">We work best with clients who want more than average digital work.</p>
-          </div>
-        </div>
-        <div class="audience-tags mt-16 reveal" role="list" aria-label="Industries and business types">
-          ${AUDIENCE_TAGS.map((tag) => `<span class="tag-pill" role="listitem">${tag}</span>`).join('')}
-        </div>
-      </div>
-    </section>
-  `;
-}
-
-export function renderWhyDsynz() {
-  return `
-    <section class="section-editorial bg-elevated" aria-labelledby="why-heading" data-section>
-      <div class="container-wide">
-        <div class="max-w-3xl reveal">
-          <p class="eyebrow">Why DSYNZ</p>
-          <h2 id="why-heading" class="heading-section mt-5 text-balance">We stand against average digital work.</h2>
-          <p class="mt-6 text-lead text-muted">Technology should not be built for the sake of building. Every solution should have a reason, a purpose, and a path to growth.</p>
-        </div>
-        <div class="content-card-grid content-card-grid-5 mt-16" role="list">
-          ${WHY_DSYNZ_CARDS.map((card, i) => `<div role="listitem">${renderContentCard(card, i)}</div>`).join('')}
-        </div>
-      </div>
-    </section>
-  `;
-}
-
-export function renderImpactFilter() {
-  return `
-    <section class="section-editorial" aria-labelledby="impact-heading" data-section>
-      <div class="section-glow" aria-hidden="true"></div>
-      <div class="container-wide relative z-10">
-        <div class="grid-12 editorial-split">
-          <div class="col-12 lg:col-5 lg:sticky lg:top-32 lg:self-start reveal">
-            <p class="eyebrow">Impact filter</p>
-            <h2 id="impact-heading" class="heading-section mt-5 text-balance">Before we build, we ask better questions.</h2>
-            <p class="mt-6 text-lead text-muted">Every DSYNZ project is judged by its ability to create meaningful business impact.</p>
-            <p class="highlight-line mt-10">If the answer is not clear, we go back to clarity.</p>
-          </div>
-          <div class="col-12 lg:col-6 lg:col-start-7">
-            <ol class="impact-questions reveal" aria-label="Project impact questions">
-              ${IMPACT_QUESTIONS.map(
-                (q, i) => `
-                <li class="impact-question" data-stagger="${i}">
-                  <span class="impact-question-num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
-                  <span class="impact-question-text">${q}</span>
-                </li>`
-              ).join('')}
-            </ol>
+            <div class="process-panels" data-process-panels>${panels}</div>
           </div>
         </div>
       </div>
@@ -308,55 +265,174 @@ export function renderImpactFilter() {
   `;
 }
 
-export function renderWorkPreview() {
-  return `
-    <section class="section-editorial bg-elevated" aria-labelledby="work-heading" data-section>
-      <div class="container-wide">
-        <div class="grid-12 items-end gap-y-8 reveal">
-          <div class="col-12 lg:col-7">
-            <p class="eyebrow">Selected work</p>
-            <h2 id="work-heading" class="heading-section mt-5 text-balance">Built with clarity. Delivered with purpose.</h2>
-            <p class="mt-6 text-lead text-muted max-w-2xl">Our work spans websites, platforms, portals, business systems, product concepts, and digital solutions for growing businesses.</p>
-          </div>
-          <div class="col-12 lg:col-5 lg:flex lg:justify-end">
-            <div class="credibility-card reveal">
-              <p class="credibility-card-value">${BRAND.experience} years</p>
-              <p class="credibility-card-text">Designing and delivering digital solutions since ${BRAND.established}.</p>
+export function renderCaseStudyItems() {
+  return CASE_STUDIES.map((p, i) => {
+    const featured = p.featured ? 'is-featured' : '';
+    return `
+    <article class="case-enterprise ${featured} group" data-stagger="${i}" role="listitem">
+      <a href="projects.html" class="case-enterprise-link">
+        <div class="case-enterprise-media">
+          <div class="case-enterprise-bg" aria-hidden="true"></div>
+          <div class="case-enterprise-overlay">
+            <span class="case-enterprise-industry">${p.industry}</span>
+            <div class="case-enterprise-metric">
+              <span class="case-metric">${p.metric}</span>
+              <span class="text-[10px] uppercase tracking-widest text-white/70">${p.metricLabel}</span>
             </div>
           </div>
         </div>
-        <div class="content-card-grid mt-16" role="list">
-          ${WORK_PREVIEW_CARDS.map(
-            (card, i) => `
-            <article class="content-card content-card-icon reveal" data-stagger="${i}" role="listitem">
-              <div class="content-card-icon-wrap">${svgIcon(card.icon, 'h-6 w-6')}</div>
-              <h3 class="content-card-title">${card.title}</h3>
-              <p class="content-card-text">${card.text}</p>
-            </article>`
-          ).join('')}
+        <div class="case-enterprise-body">
+          <h3 class="case-enterprise-title">${p.title}</h3>
+          <p class="mt-3 text-muted">${p.desc}</p>
+          <div class="case-transform mt-6">
+            <div><span class="case-transform-label">Before</span><p>${p.before}</p></div>
+            <div class="case-transform-arrow" aria-hidden="true">→</div>
+            <div class="is-after"><span class="case-transform-label">After</span><p>${p.after}</p></div>
+          </div>
         </div>
-        <div class="mt-12 text-center reveal">
-          <a href="${CTAS.work.href}" class="btn-primary btn-magnetic" data-magnetic>${CTAS.work.label}</a>
+      </a>
+    </article>`;
+  }).join('');
+}
+
+export function renderCaseStudyGrid() {
+  return `<div class="case-grid" role="list">${renderCaseStudyItems()}</div>`;
+}
+
+export function renderCaseStudies() {
+  return `
+    <section class="section-editorial" aria-labelledby="cases-heading" data-section>
+      <div class="section-glow" aria-hidden="true"></div>
+      <div class="container-wide relative z-10">
+        <div class="grid-12 items-end reveal">
+          <div class="col-12 lg:col-6">
+            <p class="eyebrow">Case studies</p>
+            <h2 id="cases-heading" class="heading-section mt-5">Enterprise transformations</h2>
+          </div>
+          <a href="projects.html" class="col-12 lg:col-6 lg:text-right btn-ghost justify-end">All case studies</a>
+        </div>
+        <div class="mt-20 case-grid" id="case-studies-grid" role="list">${renderCaseStudyItems()}</div>
+      </div>
+    </section>
+  `;
+}
+
+export function renderTechMatrix() {
+  return `
+    <section class="section-tech" aria-labelledby="tech-heading" data-section>
+      <div class="container-wide">
+        <div class="grid-12 editorial-split items-end reveal">
+          <div class="col-12 lg:col-5">
+            <p class="eyebrow">Technology</p>
+            <h2 id="tech-heading" class="heading-section mt-5">Battle-tested ecosystem</h2>
+            <p class="mt-6 text-muted">Chosen for reliability at scale — not trends.</p>
+          </div>
+        </div>
+        <div class="tech-matrix mt-16 reveal" data-tech-matrix role="list" aria-label="Technology stack">
+          ${TECH_STACK.map(
+            (t, i) => `
+            <div class="tech-cell" data-stagger="${i}" role="listitem">
+              <span class="tech-cell-cat">${t.category}</span>
+              <span class="tech-cell-name">${t.name}</span>
+            </div>`
+          ).join('')}
         </div>
       </div>
     </section>
   `;
 }
 
-export function renderAboutPreview() {
+export function renderTestimonialsEditorial() {
   return `
-    <section class="section-editorial" aria-labelledby="about-preview-heading" data-section>
+    <section class="section-editorial section-testimonials" aria-labelledby="testimonials-heading" data-section>
       <div class="container-wide">
-        <div class="grid-12 editorial-split items-center">
-          <div class="col-12 lg:col-6 reveal">
-            <p class="eyebrow">About DSYNZ</p>
-            <h2 id="about-preview-heading" class="heading-section mt-5 text-balance">Built on ${BRAND.experience} years of digital solutions experience.</h2>
+        <p class="eyebrow reveal">Client intelligence</p>
+        <h2 id="testimonials-heading" class="heading-section mt-5 max-w-4xl reveal">Voices from leaders who demand elite execution</h2>
+        <div class="testimonial-editorial mt-20 reveal">
+          <blockquote class="testimonial-editorial-main">
+            <span class="testimonial-mark" aria-hidden="true">"</span>
+            <p class="testimonial-editorial-quote">DSYNZ translated our product vision into infrastructure our enterprise clients adopt. The strategic rigor matched the engineering — rare in this industry.</p>
+            <footer class="testimonial-editorial-footer">
+              <cite class="not-italic font-semibold text-lg">Sarah Chen</cite>
+              <p class="text-sm text-muted">CEO, NovaPay</p>
+            </footer>
+          </blockquote>
+          <div class="testimonial-editorial-aside">
+            <blockquote class="testimonial-aside-card reveal">
+              <p>"Our AI initiative ROI exceeded projections in Q2. They design for outcomes."</p>
+              <footer class="mt-6 text-sm"><cite class="not-italic font-semibold">Marcus Reid</cite> · CTO, Axiom Labs</footer>
+            </blockquote>
+            <blockquote class="testimonial-aside-card reveal">
+              <p>"Premium in every interaction — from discovery to global launch."</p>
+              <footer class="mt-6 text-sm"><cite class="not-italic font-semibold">Elena Vasquez</cite> · VP Product, Helix Health</footer>
+            </blockquote>
+            <div class="testimonial-stat-card reveal">
+              <p class="font-display text-5xl text-brand">98%</p>
+              <p class="mt-2 font-medium text-[var(--color-text)]">Multi-year retention</p>
+              <p class="text-sm text-muted mt-1">Across strategic partnerships since 2018.</p>
+            </div>
           </div>
-          <div class="col-12 lg:col-5 lg:col-start-8 space-y-6 reveal">
-            <p class="text-editorial">Established in ${BRAND.established}, DSYNZ has evolved from a design and development company into a strategy-led technology partner for growing businesses.</p>
-            <p class="text-editorial text-muted">Today, we help ambitious people and companies clarify ideas, design purposeful digital products, and build systems that create real business value.</p>
-            <p class="text-editorial">Our strength comes from combining business thinking, product clarity, creative problem-solving, and reliable technology execution.</p>
-            <a href="${CTAS.about.href}" class="btn-secondary btn-magnetic inline-flex" data-magnetic>${CTAS.about.label}</a>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+export function renderEngagementSection() {
+  return `
+    <section class="section-editorial bg-elevated" aria-labelledby="engagement-heading" data-section>
+      <div class="container-wide">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <p class="eyebrow">Engagement</p>
+          <h2 id="engagement-heading" class="heading-section mt-5">How elite partnerships begin</h2>
+        </div>
+        <div id="engagement-grid" class="mt-16 grid-12 gap-6">
+          ${ENGAGEMENT_MODELS.map((m, i) => `<div class="col-12 md:col-4">${renderEngagementCardInline(m, i)}</div>`).join('')}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderEngagementCardInline(model, index) {
+  return `
+    <article class="engagement-card ${model.featured ? 'is-featured' : ''}" data-stagger="${index}">
+      ${model.featured ? '<span class="engagement-badge">Recommended</span>' : ''}
+      <p class="eyebrow">${model.featured ? 'Most selected' : 'Model'}</p>
+      <h3 class="mt-4 text-2xl font-semibold">${model.name}</h3>
+      <p class="mt-2 font-display text-xl text-brand">${model.price}</p>
+      <p class="mt-4 text-sm text-muted">${model.desc}</p>
+      <ul class="mt-8 space-y-3 border-t border-[var(--color-border)] pt-8 text-sm text-muted">
+        ${model.features.map((f) => `<li class="flex gap-2"><span class="text-brand">—</span>${f}</li>`).join('')}
+      </ul>
+      <a href="contact.html" class="btn-secondary btn-magnetic mt-10 w-full" data-magnetic>Discuss model</a>
+    </article>
+  `;
+}
+
+export function renderFAQSection() {
+  return `
+    <section class="section-editorial" aria-labelledby="faq-heading" data-section>
+      <div class="container-narrow">
+        <div class="grid-12">
+          <div class="col-12 lg:col-4 lg:sticky lg:top-32 reveal">
+            <p class="eyebrow">FAQ</p>
+            <h2 id="faq-heading" class="heading-section mt-5">Executive questions</h2>
+            <a href="contact.html" class="btn-primary btn-magnetic mt-8" data-magnetic>Speak with DSYNZ</a>
+          </div>
+          <div class="col-12 lg:col-8" id="faq-list" role="list">
+            ${FAQ_ITEMS.map(
+              (item, i) => `
+              <div class="faq-item reveal" data-faq-item>
+                <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-${i}" id="faq-btn-${i}">
+                  <span>${item.q}</span>
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                </button>
+                <div class="faq-panel" id="faq-${i}" role="region" aria-labelledby="faq-btn-${i}">
+                  <div class="faq-panel-inner"><p>${item.a}</p></div>
+                </div>
+              </div>`
+            ).join('')}
           </div>
         </div>
       </div>
@@ -374,13 +450,13 @@ export function renderCTAMega() {
       <div class="container-wide cta-mega-inner relative z-10">
         <div class="grid-12 items-end">
           <div class="col-12 lg:col-8 reveal">
-            <p class="eyebrow">Get started</p>
-            <h2 id="cta-mega-heading" class="cta-mega-headline mt-6 text-balance">Ready to build something purposeful?</h2>
-            <p class="text-lead mt-8 max-w-xl text-muted">Whether you are improving an existing business, launching a new product, or rethinking your digital systems, DSYNZ can help you start with clarity and build for growth.</p>
+            <p class="eyebrow">The next move</p>
+            <h2 id="cta-mega-heading" class="cta-mega-headline mt-6 text-balance">Your market will not wait.<br /><span class="text-gradient">Neither should you.</span></h2>
+            <p class="text-lead mt-8 max-w-xl text-muted">Partner with DSYNZ to architect technology that scales, modernizes, and defines your category.</p>
           </div>
           <div class="col-12 lg:col-4 flex flex-col gap-4 lg:items-stretch reveal">
-            <a href="${CTAS.primary.href}" class="btn-primary btn-magnetic text-center" data-magnetic>${CTAS.primary.label}</a>
-            <a href="${CTAS.talk.href}" class="btn-secondary btn-magnetic text-center" data-magnetic>${CTAS.talk.label}</a>
+            <a href="contact.html" class="btn-primary btn-magnetic text-center" data-magnetic>Begin strategic engagement</a>
+            <a href="process.html" class="btn-secondary btn-magnetic text-center" data-magnetic>Review methodology</a>
           </div>
         </div>
       </div>
@@ -388,44 +464,18 @@ export function renderCTAMega() {
   `;
 }
 
-/** Legacy export for projects page — simplified work categories */
-export function renderCaseStudyItems() {
-  return WORK_PREVIEW_CARDS.map(
-    (card, i) => `
-    <article class="case-enterprise group" data-stagger="${i}" role="listitem">
-      <a href="projects.html" class="case-enterprise-link">
-        <div class="case-enterprise-media">
-          <div class="case-enterprise-bg" aria-hidden="true"></div>
-          <div class="case-enterprise-overlay">
-            <span class="case-enterprise-industry">${card.title}</span>
-          </div>
-        </div>
-        <div class="case-enterprise-body">
-          <h3 class="case-enterprise-title">${card.title}</h3>
-          <p class="mt-3 text-muted">${card.text}</p>
-        </div>
-      </a>
-    </article>`
-  ).join('');
-}
-
-/** Process page — full growth loop */
-export function renderProcessStory() {
-  return renderGrowthLoop();
-}
-
 export function renderHomePage() {
   return [
     renderHomeHero(),
-    renderProblemSection(),
-    renderPositioningSection(),
-    renderWhatWeDo(),
-    renderGrowthLoop(),
-    renderWhoWeHelp(),
-    renderWhyDsynz(),
-    renderImpactFilter(),
-    renderWorkPreview(),
-    renderAboutPreview(),
+    renderManifesto(),
+    renderTrustStrip(),
+    renderServiceExperience(),
+    renderProcessStory(),
+    renderCaseStudies(),
+    renderTechMatrix(),
+    renderTestimonialsEditorial(),
+    renderEngagementSection(),
+    renderFAQSection(),
     renderCTAMega(),
   ].join('\n');
 }
