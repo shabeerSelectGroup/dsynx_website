@@ -1,50 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" class="dark" data-page="contact"
-  data-page-title="Contact — DSYNZ"
-  data-page-description="Contact DSYNZ to begin a strategic technology engagement."
+  data-page-title="Contact DSYNZ | Start with Clarity"
+  data-page-description="Contact DSYNZ to discuss your website, app, platform, product idea, business system, automation, or technology growth requirement."
   data-page-url="https://dsynz.com/contact.html">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact — DSYNZ</title>
-  <meta name="description" content="Contact DSYNZ to begin a strategic technology engagement." />
+  <title>Contact DSYNZ | Start with Clarity</title>
+  <meta name="description" content="Contact DSYNZ to discuss your website, app, platform, product idea, business system, automation, or technology growth requirement." />
   <link rel="canonical" href="https://dsynz.com/contact.html" />
-  <link rel="icon" href="assets/favicon/favicon.svg" type="image/svg+xml" />
+  <meta property="og:title" content="Contact DSYNZ | Start with Clarity" />
+  <meta property="og:description" content="Start with clarity — tell us what you want to build, fix, improve, or grow before investing in the wrong solution." />
+  <meta property="og:url" content="https://dsynz.com/contact.html" />
+  <link rel="icon" href="assets/favicon/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="assets/favicon/site.webmanifest" />
+  <meta name="theme-color" content="#7C3AED" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="assets/js/theme-init.js"></script>
   <link rel="stylesheet" href="assets/css/main.css?v=3" />
-  <link rel="stylesheet" href="assets/css/dsynz-elite.css?v=3" />
+  <link rel="stylesheet" href="assets/css/dsynz-elite.css?v=41" />
 </head>
-<body class="dsynz-app">
+<body class="dsynz-app dsynz-contact-page">
   <div class="site-noise" aria-hidden="true"></div>
   <div id="site-loader"></div>
   <div id="site-nav"></div>
   <main id="main">
     <div id="page-hero"></div>
-    <section class="section-editorial overlap-up">
-      <div class="container-wide grid-12 gap-16">
-        <div class="col-12 lg:col-5 reveal">
-          <p class="text-lead text-muted">We respond within one business day. Every conversation begins with strategic clarity.</p>
-          <div class="mt-10 space-y-4 text-sm">
-            <p><span class="font-semibold text-[var(--color-text)]">Email</span><br /><a href="mailto:hello@dsynz.com" class="text-brand hover:underline">hello@dsynz.com</a></p>
-            <p><span class="font-semibold text-[var(--color-text)]">Phone</span><br /><a href="tel:+15550000000" class="text-muted hover:text-brand">+1 (555) 000-0000</a></p>
-          </div>
-        </div>
-        <div class="col-12 lg:col-7 card-premium reveal" id="contact-form-wrap"></div>
-      </div>
-    </section>
-    <section class="section-editorial-sm bg-elevated">
-      <div class="container-narrow text-center" id="newsletter-section"></div>
-    </section>
+    <div id="contact-mount"></div>
+    <div id="site-cta"></div>
   </main>
   <div id="site-footer"></div>
-  <script type="module">
-    import { renderContactForm, renderNewsletter } from './assets/js/components.js';
-    document.getElementById('contact-form-wrap').innerHTML = renderContactForm({ showTitle: false });
-    document.getElementById('newsletter-section').innerHTML = renderNewsletter();
-  </script>
   <script type="module" src="assets/js/pages.js"></script>
   <script type="module" src="assets/js/main.js"></script>
   <script type="module" src="assets/js/animations.js"></script>

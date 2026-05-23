@@ -1,5 +1,5 @@
 /**
- * DSYNZ Form handlers — contact & newsletter UI (client-side)
+ * DSYNZ Form handlers â€” contact & newsletter UI (client-side)
  */
 
 function showStatus(el, message, isError = false) {
@@ -41,22 +41,25 @@ function initContactForm() {
     e.preventDefault();
     const status = document.getElementById('contact-form-status');
     const data = new FormData(form);
-    const required = ['firstName', 'lastName', 'email', 'message'];
+    const required = ['fullName', 'email', 'lookingFor', 'message'];
     const missing = required.filter((key) => !data.get(key)?.toString().trim());
 
     if (missing.length) {
       showStatus(status, 'Please complete all required fields.', true);
+      const firstMissing = form.querySelector(`[name="${missing[0]}"]`);
+      firstMissing?.focus();
       return;
     }
 
     if (!validateEmail(data.get('email').toString())) {
-      showStatus(status, 'Please enter a valid work email.', true);
+      showStatus(status, 'Please enter a valid email address.', true);
+      form.querySelector('[name="email"]')?.focus();
       return;
     }
 
     showStatus(
       status,
-      'Message received. Our team will respond within one business day.'
+      'Thank you. Your enquiry has been received. We will review it and respond with the right next step.'
     );
     form.reset();
   });

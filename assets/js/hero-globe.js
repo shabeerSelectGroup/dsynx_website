@@ -1,121 +1,32 @@
 /**
- * DSYNX — Hero dot globe + 3D orbital icons (extruded SVG strokes)
+ * DSYNZ — Dot globe visuals (Three.js) with shared page-wide pointer tracking
  */
 import * as THREE from 'https://esm.sh/three@0.170.0';
-import { SVGLoader } from 'https://esm.sh/three@0.170.0/examples/jsm/loaders/SVGLoader.js';
-import { GROWTH_LOOP_STEPS } from './brand.js';
-import { ICONS } from './components.js';
 
 const BRAND_PURPLE = 0x7c3aed;
-const BRAND_PURPLE_LIGHT = 0x9f67ff;
-const DOT_COUNT = 2800;
-const GLOBE_RADIUS = 1.92;
-const ORBIT_RADIUS = GLOBE_RADIUS * 1.3;
-const ICON_SIZE = 0.42;
-const TUBE_RADIUS = ICON_SIZE * 0.075;
-const ICON_HALF_DIAG = (ICON_SIZE * Math.SQRT2) / 2;
-const CONTENT_RADIUS = ORBIT_RADIUS + ICON_HALF_DIAG + TUBE_RADIUS * 2;
-const FIT_PAD = 1.11;
-const ICON_VIEW = 24;
+const ROT_LERP = 0.065;
 
-const svgLoader = new SVGLoader();
-const iconPrototypeCache = new Map();
-let sharedIconMaterial;
+const PRESETS = {
+  hero: {
+    minWidth: 1024,
+    dotCount: 2800,
+    glowCount: 420,
+    radius: 1.92,
+    cameraZ: 6.65,
+    fov: 34,
+    rotYRange: 1.15,
+    rotXRange: 0.62,
+    dotSize: 0.045,
+    glowSize: 0.07,
+    autoSpin: 0.0024,
+    influence: 1,
+  },
+};
 
-const _orbitUp = new THREE.Vector3(0, 1, 0);
-const _axisX = new THREE.Vector3(1, 0, 0);
-const _normal = new THREE.Vector3();
-const _quat = new THREE.Quaternion();
-const _worldPos = new THREE.Vector3();
-const _radial = new THREE.Vector3();
-const _box = new THREE.Box3();
-const _center = new THREE.Vector3();
-
-function pathDataFromIcon(iconHtml) {
-  const match = iconHtml.match(/\sd="([^"]+)"/);
-  return match ? match[1] : '';
-}
-
-function iconSvgMarkup(iconKey) {
-  const pathD = pathDataFromIcon(ICONS[iconKey] || ICONS.code);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ICON_VIEW} ${ICON_VIEW}"><path d="${pathD}"/></svg>`;
-}
-
-function getIconMaterial() {
-  if (!sharedIconMaterial) {
-    sharedIconMaterial = new THREE.MeshStandardMaterial({
-      color: BRAND_PURPLE,
-      emissive: BRAND_PURPLE_LIGHT,
-      emissiveIntensity: 0.42,
-      metalness: 0.22,
-      roughness: 0.38,
-      depthTest: true,
-      depthWrite: true,
-    });
-  }
-  return sharedIconMaterial;
-}
-
-function points2DToCurve3D(points2D) {
-  const scale = ICON_SIZE / ICON_VIEW;
-  const pts3d = points2D.map(
-    (p) => new THREE.Vector3((p.x - ICON_VIEW / 2) * scale, -(p.y - ICON_VIEW / 2) * scale, 0)
-  );
-
-  if (pts3d.length < 2) return null;
-  if (pts3d.length === 2) {
-    return new THREE.LineCurve3(pts3d[0], pts3d[1]);
-  }
-  return new THREE.CatmullRomCurve3(pts3d, false, 'catmullrom', 0.35);
-}
-
-function addTubeAlongCurve(group, curve) {
-  const length = curve.getLength();
-  const segments = Math.max(6, Math.ceil(length / (TUBE_RADIUS * 1.6)));
-  const geometry = new THREE.TubeGeometry(curve, segments, TUBE_RADIUS, 7, false);
-  const mesh = new THREE.Mesh(geometry, getIconMaterial());
-  mesh.renderOrder = 2;
-  group.add(mesh);
-}
-
-function buildIcon3DGroup(iconKey) {
-  const group = new THREE.Group();
-  const { paths } = svgLoader.parse(iconSvgMarkup(iconKey));
-
-  paths.forEach((path) => {
-    const subPaths = path.subPaths?.length ? path.subPaths : [path];
-    subPaths.forEach((subPath) => {
-      const points2D = subPath.getPoints(36);
-      const curve = points2DToCurve3D(points2D);
-      if (curve) addTubeAlongCurve(group, curve);
-    });
-  });
-
-  if (group.children.length === 0) return group;
-
-  _box.setFromObject(group);
-  _box.getCenter(_center);
-  group.children.forEach((child) => {
-    child.position.sub(_center);
-  });
-
-  return group;
-}
-
-function disposeObject3D(root, { disposeGeometry = true } = {}) {
-  root.traverse((child) => {
-    if (child.isMesh && disposeGeometry && child.geometry) {
-      child.geometry.dispose();
-    }
-  });
-}
-
-function getIconPrototype(iconKey) {
-  if (!iconPrototypeCache.has(iconKey)) {
-    iconPrototypeCache.set(iconKey, buildIcon3DGroup(iconKey));
-  }
-  return iconPrototypeCache.get(iconKey);
-}
+const pointer = { normX: 0, normY: 0 };
+let pointerBound = false;
+let pointerCleanup = null;
+const instances = new Set();
 
 function fibonacciSpherePoints(count, radius) {
   const positions = new Float32Array(count * 3);
@@ -133,81 +44,64 @@ function fibonacciSpherePoints(count, radius) {
   return positions;
 }
 
-function createOrbitRing(radius) {
-  const curve = new THREE.EllipseCurve(0, 0, radius, radius, 0, Math.PI * 2, false, 0);
-  const points = curve.getPoints(128).map((p) => new THREE.Vector3(p.x, 0, p.y));
-  const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  const material = new THREE.LineBasicMaterial({
-    color: BRAND_PURPLE_LIGHT,
-    transparent: true,
-    opacity: 0.16,
-    depthWrite: false,
-    depthTest: true,
-  });
-  return new THREE.Line(geometry, material);
+function lerp(current, target, amount) {
+  return current + (target - current) * amount;
 }
 
-function createIcon3D(iconKey) {
-  return getIconPrototype(iconKey).clone(true);
+function ensurePointerTracking() {
+  if (pointerBound) return;
+
+  const onMouseMove = (e) => {
+    pointer.normX = Math.max(-1, Math.min(1, (e.clientX / window.innerWidth - 0.5) * 2));
+    pointer.normY = Math.max(-1, Math.min(1, (e.clientY / window.innerHeight - 0.5) * 2));
+  };
+
+  const onMouseLeave = () => {
+    pointer.normX = 0;
+    pointer.normY = 0;
+  };
+
+  document.addEventListener('mousemove', onMouseMove, { passive: true });
+  document.documentElement.addEventListener('mouseleave', onMouseLeave);
+
+  pointerBound = true;
+  pointerCleanup = () => {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.documentElement.removeEventListener('mouseleave', onMouseLeave);
+    pointerBound = false;
+    pointer.normX = 0;
+    pointer.normY = 0;
+  };
 }
 
-function iconSpinSpeed(index) {
-  return (index % 2 === 0 ? 1 : -1) * (0.022 + (index % 4) * 0.003);
-}
-
-/** Evenly distributed orbital planes around the globe (golden-sphere normals). */
-function applyOrbitOrientation(pivot, index, total) {
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  const inclination = Math.acos(1 - (2 * (index + 0.5)) / total);
-  const azimuth = golden * index;
-
-  _normal.set(
-    Math.sin(inclination) * Math.cos(azimuth),
-    Math.cos(inclination),
-    Math.sin(inclination) * Math.sin(azimuth)
-  );
-
-  _quat.setFromUnitVectors(_orbitUp, _normal);
-  pivot.quaternion.copy(_quat);
-  pivot.rotateY((index / total) * Math.PI * 2);
-}
-
-function orbitalSpeed(index) {
-  const base = 0.0042;
-  const direction = index % 2 === 0 ? 1 : -1;
-  return direction * (base + (index % 3) * 0.00035);
-}
-
-/** Frame the full globe + orbits + icons inside the canvas (object-fit: contain). */
-function fitCameraToContent(camera, width, height) {
-  const vFov = (camera.fov * Math.PI) / 180;
-  const aspect = Math.max(width / height, 0.01);
-  const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
-  const r = CONTENT_RADIUS * FIT_PAD;
-  const z = Math.max(r / Math.tan(vFov / 2), r / Math.tan(hFov / 2));
-  camera.position.set(0, 0, z);
-  camera.lookAt(0, 0, 0);
-  camera.updateProjectionMatrix();
-}
-
-export function initHeroGlobe() {
-  const mount = document.querySelector('[data-hero-globe]');
-  if (!mount) return null;
-
+function createDotGlobe(mount, presetKey) {
+  const config = PRESETS[presetKey] || PRESETS.hero;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isDesktop = () => window.matchMedia('(min-width: 1024px)').matches;
+  const meetsWidth = () => window.innerWidth >= config.minWidth;
 
   let renderer;
   let scene;
   let camera;
   let globe;
   let glow;
-  let depthShell;
-  let worldGroup;
-  let satellites = [];
+  let coreMaterial;
+  let glowMaterial;
   let frameId = 0;
   let running = false;
   let resizeObserver;
+
+  const rotation = {
+    spinY: 0,
+    offsetX: 0,
+    offsetY: 0,
+    targetOffsetX: 0,
+    targetOffsetY: 0,
+  };
+
+  const instance = {
+    tick() {},
+    dispose() {},
+  };
 
   const getSize = () => {
     const { width, height } = mount.getBoundingClientRect();
@@ -217,27 +111,48 @@ export function initHeroGlobe() {
     };
   };
 
+  const updateTargets = () => {
+    const inf = config.influence;
+    rotation.targetOffsetY = pointer.normX * config.rotYRange * inf;
+    rotation.targetOffsetX = -pointer.normY * config.rotXRange * inf;
+  };
+
+  const syncRotation = () => {
+    if (!globe || !glow) return;
+    const rotY = rotation.spinY + rotation.offsetY;
+    globe.rotation.x = rotation.offsetX;
+    globe.rotation.y = rotY;
+    glow.rotation.x = rotation.offsetX;
+    glow.rotation.y = rotY * 1.02;
+  };
+
   const animate = () => {
     if (!running || !globe || !renderer || !camera) return;
 
+    updateTargets();
+    const followAmount = reducedMotion ? 0.12 : ROT_LERP;
+
     if (!reducedMotion) {
-      globe.rotation.y += 0.0018;
-      globe.rotation.x += 0.00035;
-      glow.rotation.y = globe.rotation.y * 1.02;
-      glow.rotation.x = globe.rotation.x;
-      depthShell.rotation.copy(globe.rotation);
-
-      satellites.forEach(({ pivot, speed, axisRoll, spinSpeed, rollAngle }) => {
-        pivot.rotation.y += speed;
-        rollAngle.value += spinSpeed;
-
-        axisRoll.getWorldPosition(_worldPos);
-        _radial.copy(_worldPos).normalize();
-        axisRoll.quaternion.setFromUnitVectors(_axisX, _radial);
-        axisRoll.rotateX(rollAngle.value);
-      });
+      rotation.spinY += config.autoSpin;
     }
 
+    rotation.offsetX = lerp(rotation.offsetX, rotation.targetOffsetX, followAmount);
+    rotation.offsetY = lerp(rotation.offsetY, rotation.targetOffsetY, followAmount);
+
+    if (coreMaterial && glowMaterial) {
+      const intensity =
+        Math.min(1, Math.sqrt(pointer.normX * pointer.normX + pointer.normY * pointer.normY)) *
+        config.influence;
+      coreMaterial.size = lerp(coreMaterial.size, config.dotSize + intensity * 0.01, 0.1);
+      glowMaterial.opacity = lerp(glowMaterial.opacity, 0.32 + intensity * 0.14, 0.1);
+    }
+
+    const targetZ =
+      config.cameraZ -
+      Math.min(0.15, (Math.abs(pointer.normX) + Math.abs(pointer.normY)) * 0.05 * config.influence);
+    camera.position.z = lerp(camera.position.z, targetZ, 0.08);
+
+    syncRotation();
     renderer.render(scene, camera);
     frameId = requestAnimationFrame(animate);
   };
@@ -255,110 +170,50 @@ export function initHeroGlobe() {
     frameId = 0;
   };
 
-  const dispose = () => {
+  const disposeGL = () => {
     stop();
     resizeObserver?.disconnect();
     resizeObserver = null;
 
-    if (scene && worldGroup) {
-      satellites.forEach(({ plane, ring }) => {
-        ring.geometry?.dispose();
-        ring.material?.dispose();
-        worldGroup.remove(plane);
-      });
-    }
-    satellites = [];
-    worldGroup = null;
-
-    if (globe) {
-      globe.geometry?.dispose();
-      globe.material?.dispose();
-    }
-    if (glow) {
-      glow.geometry?.dispose();
-      glow.material?.dispose();
-    }
-    if (depthShell) {
-      depthShell.geometry?.dispose();
-      depthShell.material?.dispose();
-    }
-
+    globe?.geometry?.dispose();
+    globe?.material?.dispose();
+    glow?.geometry?.dispose();
+    glow?.material?.dispose();
     renderer?.dispose();
     mount.replaceChildren();
-
-    iconPrototypeCache.forEach((group) => disposeObject3D(group));
-    iconPrototypeCache.clear();
-    sharedIconMaterial?.dispose();
-    sharedIconMaterial = null;
 
     renderer = null;
     scene = null;
     camera = null;
     globe = null;
     glow = null;
-    depthShell = null;
+    coreMaterial = null;
+    glowMaterial = null;
   };
 
   const resize = () => {
     if (!renderer || !camera) return;
     const { width, height } = getSize();
     camera.aspect = width / height;
-    fitCameraToContent(camera, width, height);
+    camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
   };
 
-  const buildSatellites = (parent) => {
-    const total = GROWTH_LOOP_STEPS.length;
-
-    satellites = GROWTH_LOOP_STEPS.map((step, index) => {
-      const plane = new THREE.Object3D();
-      applyOrbitOrientation(plane, index, total);
-
-      const spin = new THREE.Object3D();
-      spin.rotation.y = (index / total) * Math.PI * 2;
-      plane.add(spin);
-
-      const ring = createOrbitRing(ORBIT_RADIUS);
-      spin.add(ring);
-
-      const body = new THREE.Object3D();
-      body.position.set(ORBIT_RADIUS, 0, 0);
-
-      const axisRoll = new THREE.Object3D();
-      body.add(axisRoll);
-
-      const iconOrient = new THREE.Object3D();
-      iconOrient.rotation.y = Math.PI / 2;
-      axisRoll.add(iconOrient);
-
-      const iconRoot = createIcon3D(step.icon);
-      iconOrient.add(iconRoot);
-      spin.add(body);
-
-      parent.add(plane);
-      return {
-        plane,
-        pivot: spin,
-        speed: orbitalSpeed(index),
-        ring,
-        axisRoll,
-        iconRoot,
-        spinSpeed: iconSpinSpeed(index),
-        rollAngle: { value: (index / total) * Math.PI * 2 },
-      };
-    });
-  };
-
   const build = () => {
-    dispose();
+    disposeGL();
 
-    if (!isDesktop()) return;
+    if (!meetsWidth()) return;
 
     const { width, height } = getSize();
     if (width < 2 || height < 2) return;
 
+    rotation.spinY = 0;
+    rotation.offsetX = 0;
+    rotation.offsetY = 0;
+
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    camera = new THREE.PerspectiveCamera(config.fov, width / height, 0.1, 100);
+    camera.position.set(0, 0, config.cameraZ);
 
     renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -368,87 +223,64 @@ export function initHeroGlobe() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height, false);
     renderer.setClearColor(0x000000, 0);
-    renderer.sortObjects = true;
     mount.appendChild(renderer.domElement);
-
-    depthShell = new THREE.Mesh(
-      new THREE.SphereGeometry(GLOBE_RADIUS * 0.94, 56, 56),
-      new THREE.MeshBasicMaterial({
-        colorWrite: false,
-        depthWrite: true,
-        depthTest: true,
-      })
-    );
-    worldGroup = new THREE.Group();
-    scene.add(worldGroup);
-
-    depthShell.renderOrder = 0;
-    worldGroup.add(depthShell);
 
     const coreGeometry = new THREE.BufferGeometry();
     coreGeometry.setAttribute(
       'position',
-      new THREE.BufferAttribute(fibonacciSpherePoints(DOT_COUNT, GLOBE_RADIUS), 3)
+      new THREE.BufferAttribute(fibonacciSpherePoints(config.dotCount, config.radius), 3)
     );
 
-    globe = new THREE.Points(
-      coreGeometry,
-      new THREE.PointsMaterial({
-        color: BRAND_PURPLE,
-        size: 0.045,
-        sizeAttenuation: true,
-        transparent: true,
-        opacity: 0.92,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        depthTest: true,
-      })
-    );
-    globe.renderOrder = 1;
-    worldGroup.add(globe);
+    coreMaterial = new THREE.PointsMaterial({
+      color: BRAND_PURPLE,
+      size: config.dotSize,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+
+    globe = new THREE.Points(coreGeometry, coreMaterial);
+    scene.add(globe);
 
     const glowGeometry = new THREE.BufferGeometry();
     glowGeometry.setAttribute(
       'position',
-      new THREE.BufferAttribute(fibonacciSpherePoints(420, GLOBE_RADIUS * 1.03), 3)
+      new THREE.BufferAttribute(fibonacciSpherePoints(config.glowCount, config.radius * 1.04), 3)
     );
 
-    glow = new THREE.Points(
-      glowGeometry,
-      new THREE.PointsMaterial({
-        color: BRAND_PURPLE_LIGHT,
-        size: 0.07,
-        sizeAttenuation: true,
-        transparent: true,
-        opacity: 0.32,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        depthTest: true,
-      })
-    );
-    glow.renderOrder = 1;
-    worldGroup.add(glow);
+    glowMaterial = new THREE.PointsMaterial({
+      color: 0xb794f6,
+      size: config.glowSize,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.32,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+    glow = new THREE.Points(glowGeometry, glowMaterial);
+    scene.add(glow);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
-    keyLight.position.set(5, 8, 10);
-    scene.add(keyLight);
-
-    const fillLight = new THREE.DirectionalLight(BRAND_PURPLE_LIGHT, 0.28);
-    fillLight.position.set(-6, -4, 8);
-    scene.add(fillLight);
-
-    buildSatellites(worldGroup);
-    fitCameraToContent(camera, width, height);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.35));
     start();
   };
 
-  requestAnimationFrame(build);
+  instance.tick = updateTargets;
+
+  instance.dispose = () => {
+    instances.delete(instance);
+    disposeGL();
+    if (instances.size === 0 && pointerCleanup) {
+      pointerCleanup();
+      pointerCleanup = null;
+    }
+  };
 
   resizeObserver = new ResizeObserver(() => {
-    if (!isDesktop()) {
-      dispose();
+    if (!meetsWidth()) {
+      disposeGL();
       return;
     }
     if (!renderer) {
@@ -460,19 +292,50 @@ export function initHeroGlobe() {
   resizeObserver.observe(mount);
 
   const onBreakpoint = () => {
-    if (isDesktop()) build();
-    else dispose();
+    if (meetsWidth()) build();
+    else instance.dispose();
   };
 
   window.addEventListener('resize', onBreakpoint, { passive: true });
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stop();
-    else start();
+  requestAnimationFrame(build);
+  instances.add(instance);
+
+  return {
+    dispose: () => {
+      window.removeEventListener('resize', onBreakpoint);
+      instance.dispose();
+    },
+    start,
+    stop,
+  };
+}
+
+export function initHeroGlobe() {
+  ensurePointerTracking();
+
+  const cleanups = [];
+
+  document.querySelectorAll('[data-dot-globe]').forEach((mount) => {
+    const variant = mount.dataset.dotGlobe || 'hero';
+    const api = createDotGlobe(mount, variant);
+    if (api) cleanups.push(api);
   });
 
+  const onVisibility = () => {
+    cleanups.forEach((api) => {
+      if (document.hidden) api.stop();
+      else api.start();
+    });
+  };
+
+  document.addEventListener('visibilitychange', onVisibility);
+
   return () => {
-    window.removeEventListener('resize', onBreakpoint);
-    dispose();
+    document.removeEventListener('visibilitychange', onVisibility);
+    cleanups.forEach((api) => api.dispose());
+    if (instances.size === 0 && pointerCleanup) {
+      pointerCleanup();
+    }
   };
 }

@@ -3,13 +3,14 @@
  * Injects shared navigation, footer, CTA, newsletter, and contact form blocks.
  */
 
-import { BRAND, HOME_SERVICES } from './brand.js';
+import { BRAND, BRAND_ASSETS, HOME_SERVICES } from './brand.js';
 
 const SITE = {
   name: BRAND.name,
   tagline: BRAND.tagline,
   descriptor: BRAND.descriptor,
   email: BRAND.email,
+  phones: BRAND.phones,
   phone: BRAND.phone,
   baseUrl: BRAND.baseUrl,
 };
@@ -56,6 +57,11 @@ const ICONS = {
   wrench: '<path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.016-.071 2.127-.704 2.988z"/>',
   'arrow-up': '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"/>',
   clipboard: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c1.07.013 2.008.714 2.007 1.916a48.422 48.422 0 01-1.122.08m-5.801 0c-.98.02-1.976.925-1.976 2.192v9.75A2.25 2.25 0 007.5 21h3.75m0-16.5h-3.75m9.75 0H21m-9.75 0v16.5m0-16.5v-3A2.25 2.25 0 0018 2.25h-3.75"/>',
+  eye: '<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>',
+  'link-slash':
+    '<path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/>',
+  squares:
+    '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>',
 };
 
 function svgIcon(name, className = 'h-6 w-6') {
@@ -70,10 +76,28 @@ function isActive(href) {
 
 export function renderLogo(link = true) {
   const inner = `
-    <span class="font-display text-xl tracking-tight text-[var(--color-text)]" aria-label="DSYNZ">DSYNZ</span>
+    <span class="site-logo-wrap">
+      <img
+        src="${BRAND_ASSETS.logoDark}"
+        alt=""
+        class="site-logo h-8 w-auto max-w-[9.5rem] object-contain object-left dark:block hidden"
+        width="152"
+        height="32"
+        decoding="async"
+      />
+      <img
+        src="${BRAND_ASSETS.logoLight}"
+        alt=""
+        class="site-logo h-8 w-auto max-w-[9.5rem] object-contain object-left block dark:hidden"
+        width="152"
+        height="32"
+        decoding="async"
+      />
+      <span class="sr-only">DSYNZ</span>
+    </span>
   `;
-  if (!link) return `<div class="flex flex-col gap-0.5">${inner}</div>`;
-  return `<a href="index.html" class="group flex flex-col gap-0.5 focus:outline-none" aria-label="DSYNZ Home">${inner}</a>`;
+  if (!link) return `<div class="flex items-center">${inner}</div>`;
+  return `<a href="index.html" class="site-logo-link group flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm" aria-label="DSYNZ Home">${inner}</a>`;
 }
 
 export function renderNavbar() {
@@ -152,7 +176,12 @@ export function renderFooter() {
               <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)]">Connect</h3>
               <ul class="mt-4 space-y-3">
                 <li><a href="mailto:${SITE.email}" class="text-sm text-muted hover:text-brand">${SITE.email}</a></li>
-                <li><a href="tel:${SITE.phone.replace(/\s/g, '')}" class="text-sm text-muted hover:text-brand">${SITE.phone}</a></li>
+                ${SITE.phones
+                  .map(
+                    (p) =>
+                      `<li><a href="tel:${p.tel}" class="text-sm text-muted hover:text-brand">${p.display}</a></li>`
+                  )
+                  .join('')}
               </ul>
               <div class="mt-6 flex gap-4">
                 <a href="#" class="text-muted hover:text-brand" aria-label="LinkedIn"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
@@ -516,7 +545,6 @@ export function renderPageLoader() {
 export {
   SITE,
   SERVICES,
-  ICONS,
   svgIcon,
   NAV_LINKS,
   CASE_STUDIES,

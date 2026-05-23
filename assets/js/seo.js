@@ -1,5 +1,5 @@
 /**
- * DSYNZ SEO Helper — structured data & meta utilities
+ * DSYNZ SEO Helper � structured data & meta utilities
  */
 
 const DSYNZ_ORG = {
@@ -7,7 +7,7 @@ const DSYNZ_ORG = {
   '@type': 'Organization',
   name: 'DSYNZ',
   url: 'https://dsynz.com',
-  logo: 'https://dsynz.com/assets/favicon/favicon.svg',
+  logo: 'https://dsynz.com/assets/favicon/android-chrome-512x512.png',
   slogan: 'We design unbeatable businesses.',
   description:
     'DSYNZ helps ambitious businesses clarify ideas, design purposeful digital products, and build technology solutions that create real business growth.',

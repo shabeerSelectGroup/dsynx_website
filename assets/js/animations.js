@@ -136,7 +136,35 @@ function initScrollReveals() {
 function initStaggerGrids() {
   if (prefersReducedMotion) return;
 
-  ['.services-track', '#engagement-grid', '.tech-matrix'].forEach((selector) => {
+  [
+    '.services-track',
+    '#engagement-grid',
+    '#services-engagement-grid',
+    '.core-services-grid',
+    '.secondary-services-grid',
+    '.build-items-grid',
+    '.process-step-cards',
+    '.process-principles-grid',
+    '.process-expect-grid',
+    '.process-engage-grid',
+    '.process-start-grid',
+    '.work-categories-grid',
+    '.work-case-grid',
+    '.work-format-grid',
+    '.work-proof-grid',
+    '.work-difference-grid',
+    '.about-diff-grid',
+    '.about-values-grid',
+    '.about-culture-grid',
+    '.about-stand-grid',
+    '.insight-featured-grid',
+    '.insight-category-grid',
+    '.insight-articles-stack',
+    '.contact-steps',
+    '.contact-reasons-grid',
+    '.contact-faq-list',
+    '.tech-matrix',
+  ].forEach((selector) => {
     const grid = document.querySelector(selector);
     if (!grid?.children.length) return;
     gsap.from(grid.children, {

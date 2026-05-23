@@ -32,6 +32,23 @@ function renderContentCards(cards) {
     .join('');
 }
 
+function renderProblemCardIcon(icon) {
+  return `<span class="content-card-icon" aria-hidden="true">${svgIcon(icon, 'content-card-icon-svg')}</span>`;
+}
+
+function renderProblemCards(cards) {
+  return cards
+    .map(
+      (card, i) => `
+      <article class="content-card content-card-problem reveal" data-stagger="${i}" role="listitem">
+        ${renderProblemCardIcon(card.icon)}
+        <h3 class="content-card-title">${card.title}</h3>
+        <p class="content-card-text">${card.text}</p>
+      </article>`
+    )
+    .join('');
+}
+
 export function renderParticles() {
   return Array.from({ length: 18 }, (_, i) => `<span class="particle" style="--i:${i}" aria-hidden="true"></span>`).join('');
 }
@@ -105,10 +122,11 @@ export function renderHeroBridge() {
       <div class="container-wide hero-bridge-inner">
         <h2 id="hero-bridge-heading" class="hero-bridge-statement reveal">${BRAND.heroSupporting}</h2>
         <p class="hero-bridge-eyebrow reveal">${BRAND.eyebrow}</p>
-        <div class="hero-bridge-pillars reveal" role="list" aria-label="How we work">
+        <div class="hero-bridge-pillars reveal" data-wire-icons-stage="bridge" role="list" aria-label="How we work">
           ${PILLARS.map(
             (p) => `
             <div class="hero-bridge-pillar" role="listitem">
+              <div class="wire-icon-anchor" data-wire-icon-anchor aria-hidden="true"></div>
               <p class="hero-pillar-label">${p.label}</p>
               <p class="hero-pillar-desc">${p.desc}</p>
             </div>`
@@ -148,8 +166,8 @@ export function renderHomeHero() {
             <p class="hero-credibility" data-hero-line>${BRAND.credibility}</p>
           </div>
           <aside class="hero-visual-col" aria-hidden="true">
-            <div class="hero-globe-wrap" data-hero-visual>
-              <div class="hero-globe" data-hero-globe></div>
+            <div class="hero-globe-wrap" data-hero-globe-wrap data-hero-visual>
+              <div class="hero-globe" data-dot-globe="hero"></div>
               <div class="hero-globe-glow" aria-hidden="true"></div>
             </div>
           </aside>
@@ -175,8 +193,8 @@ export function renderProblemSection() {
             <p class="text-lead">At DSYNZ, we start before development. We understand the business, define the problem, and design technology with purpose.</p>
           </div>
         </div>
-        <div class="content-cards mt-20 reveal" role="list">
-          ${renderContentCards(PROBLEM_CARDS)}
+        <div class="content-cards content-cards-problem mt-20 reveal" role="list">
+          ${renderProblemCards(PROBLEM_CARDS)}
         </div>
       </div>
     </section>
@@ -264,7 +282,10 @@ export function renderGrowthLoop() {
 }
 
 export function renderWhoWeHelp() {
-  const tags = AUDIENCE_TAGS.map((tag) => `<li class="tag-pill">${tag}</li>`).join('');
+  const tagRow = AUDIENCE_TAGS.map((tag) => `<li class="tag-pill">${tag}</li>`).join('');
+  const tagRowDup = AUDIENCE_TAGS.map(
+    (tag) => `<li class="tag-pill tag-pill--marquee-dup" aria-hidden="true">${tag}</li>`
+  ).join('');
   return `
     <section id="who-we-help" class="section-editorial" aria-labelledby="who-heading" data-section>
       <div class="container-wide">
@@ -281,7 +302,9 @@ export function renderWhoWeHelp() {
             </blockquote>
           </div>
         </div>
-        <ul class="audience-tags mt-16 flex flex-wrap gap-2 reveal" role="list" aria-label="Industries and business types">${tags}</ul>
+      </div>
+      <div class="audience-marquee-wrap mt-16 reveal" role="region" aria-label="Industries and business types">
+        <ul class="audience-marquee" role="list">${tagRow}${tagRowDup}</ul>
       </div>
     </section>
   `;
@@ -345,17 +368,14 @@ export function renderWorkPreview() {
   return `
     <section id="work" class="section-editorial" aria-labelledby="work-heading" data-section>
       <div class="container-wide">
-        <div class="grid-12 items-end gap-y-8 reveal">
+        <div class="grid-12 work-section-intro items-end reveal">
           <div class="col-12 lg:col-7">
             <p class="eyebrow">Work</p>
             <h2 id="work-heading" class="heading-section mt-5 text-balance">Built with clarity. Delivered with purpose.</h2>
-            <p class="mt-6 text-lead text-muted max-w-2xl">Our work spans websites, platforms, portals, business systems, product concepts, and digital solutions for growing businesses.</p>
+            <p class="mt-8 text-lead text-muted max-w-2xl">Our work spans websites, platforms, portals, business systems, product concepts, and digital solutions for growing businesses.</p>
           </div>
-          <div class="col-12 lg:col-5 flex lg:justify-end">
-            <div class="credibility-card reveal">
-              <p class="credibility-card-value">15+ years</p>
-              <p class="credibility-card-text">Designing and delivering digital solutions since 2011.</p>
-            </div>
+          <div class="col-12 lg:col-5 work-visual-col">
+            <div class="work-visual reveal" data-work-visual aria-hidden="true"></div>
           </div>
         </div>
         <div class="work-preview-grid mt-16 reveal" role="list">${cards}</div>
