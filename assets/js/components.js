@@ -3,7 +3,7 @@
  * Injects shared navigation, footer, CTA, newsletter, and contact form blocks.
  */
 
-import { BRAND } from './brand.js';
+import { BRAND, CTAS, HOME_SERVICES } from './brand.js';
 
 const SITE = {
   name: BRAND.name,
@@ -16,29 +16,15 @@ const SITE = {
 
 const NAV_LINKS = [
   { href: 'index.html', label: 'Home' },
-  { href: 'services.html', label: 'Services' },
-  { href: 'projects.html', label: 'Projects' },
-  { href: 'process.html', label: 'Process' },
+  { href: 'services.html', label: 'What We Do' },
+  { href: 'process.html', label: 'How We Work' },
+  { href: 'projects.html', label: 'Work' },
   { href: 'about.html', label: 'About' },
   { href: 'blog.html', label: 'Insights' },
-  { href: 'careers.html', label: 'Careers' },
   { href: 'contact.html', label: 'Contact' },
 ];
 
-const SERVICES = [
-  { icon: 'code', title: 'Custom Software', desc: 'Tailored systems built for scale, security, and long-term growth.' },
-  { icon: 'globe', title: 'Web Applications', desc: 'High-performance web platforms with exceptional UX.' },
-  { icon: 'mobile', title: 'Mobile Apps', desc: 'Native and cross-platform experiences users love.' },
-  { icon: 'palette', title: 'UI/UX Design', desc: 'Interfaces that convert clarity into competitive advantage.' },
-  { icon: 'sparkle', title: 'AI Solutions', desc: 'Intelligent automation and decision systems that deliver ROI.' },
-  { icon: 'cloud', title: 'Cloud Solutions', desc: 'Resilient infrastructure designed for modern workloads.' },
-  { icon: 'layers', title: 'SaaS Development', desc: 'Subscription products engineered for retention and scale.' },
-  { icon: 'zap', title: 'Automation', desc: 'Workflow systems that eliminate friction across operations.' },
-  { icon: 'chart', title: 'Growth Technology', desc: 'Data-driven tools that accelerate revenue and efficiency.' },
-  { icon: 'refresh', title: 'Digital Transformation', desc: 'End-to-end modernization with measurable outcomes.' },
-  { icon: 'brand', title: 'Branding & Identity', desc: 'Digital brands that signal trust and category leadership.' },
-  { icon: 'search', title: 'SEO & Marketing', desc: 'Discoverability strategies aligned with business goals.' },
-];
+const SERVICES = HOME_SERVICES;
 
 const ICONS = {
   code: '<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/>',
@@ -68,7 +54,6 @@ function isActive(href) {
 export function renderLogo(link = true) {
   const inner = `
     <span class="font-display text-xl tracking-tight text-[var(--color-text)]" aria-label="DSYNZ">DSYNZ</span>
-    <span class="hidden text-[10px] font-semibold uppercase tracking-[0.25em] text-muted xl:inline">Strategy · Technology · Growth</span>
   `;
   if (!link) return `<div class="flex flex-col gap-0.5">${inner}</div>`;
   return `<a href="index.html" class="group flex flex-col gap-0.5 focus:outline-none" aria-label="DSYNZ Home">${inner}</a>`;
@@ -99,7 +84,7 @@ export function renderNavbar() {
             <svg class="h-5 w-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>
             <svg class="h-5 w-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
           </button>
-          <a href="contact.html" class="btn-primary btn-magnetic hidden !py-2.5 !text-xs sm:inline-flex" data-magnetic>Start a project</a>
+          <a href="${CTAS.primary.href}" class="btn-primary btn-magnetic hidden !py-2.5 !text-xs sm:inline-flex" data-magnetic>${CTAS.primary.label}</a>
           <button type="button" id="mobile-menu-btn" class="btn-ghost !p-2 lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M3.75 9h16.5m-16.5 6.75h16.5"/></svg>
           </button>
@@ -107,7 +92,7 @@ export function renderNavbar() {
       </nav>
       <div id="mobile-menu" class="nav-glass hidden border-t border-[var(--color-border)] lg:hidden" aria-hidden="true">
         <div class="container-wide space-y-1 py-4">${mobileLinks}
-          <a href="contact.html" class="btn-primary mt-4 w-full">Start a project</a>
+          <a href="${CTAS.primary.href}" class="btn-primary mt-4 w-full">${CTAS.primary.label}</a>
         </div>
       </div>
     </header>
@@ -135,15 +120,15 @@ export function renderFooter() {
               <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)]">Company</h3>
               <ul class="mt-4 space-y-3">
                 <li><a href="about.html" class="text-sm text-muted hover:text-brand">About</a></li>
-                <li><a href="process.html" class="text-sm text-muted hover:text-brand">Process</a></li>
-                <li><a href="projects.html" class="text-sm text-muted hover:text-brand">Projects</a></li>
+                <li><a href="process.html" class="text-sm text-muted hover:text-brand">How We Work</a></li>
+                <li><a href="projects.html" class="text-sm text-muted hover:text-brand">Work</a></li>
                 <li><a href="careers.html" class="text-sm text-muted hover:text-brand">Careers</a></li>
                 <li><a href="blog.html" class="text-sm text-muted hover:text-brand">Insights</a></li>
                 <li><a href="contact.html" class="text-sm text-muted hover:text-brand">Contact</a></li>
               </ul>
             </div>
             <div>
-              <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)]">Services</h3>
+              <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)]">What We Do</h3>
               <ul class="mt-4 space-y-3">${serviceLinks}</ul>
             </div>
             <div>
@@ -174,12 +159,12 @@ export function renderFooter() {
 }
 
 export function renderCTA({
-  title = 'Ready to build something unbeatable?',
-  subtitle = 'Tell us where you are today. We will design the technology path to where you need to be.',
-  primaryHref = 'contact.html',
-  primaryLabel = 'Start a conversation',
-  secondaryHref = 'process.html',
-  secondaryLabel = 'See our process',
+  title = 'Ready to build something purposeful?',
+  subtitle = 'Whether you are improving an existing business, launching a new product, or rethinking your digital systems, DSYNZ can help you start with clarity and build for growth.',
+  primaryHref = CTAS.primary.href,
+  primaryLabel = CTAS.primary.label,
+  secondaryHref = CTAS.talk.href,
+  secondaryLabel = CTAS.talk.label,
 } = {}) {
   return `
     <section class="section-padding" aria-labelledby="cta-heading" data-section>

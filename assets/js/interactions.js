@@ -1,10 +1,6 @@
 /**
  * DSYNZ — Interactive section behaviors
  */
-import { SERVICES } from './components.js';
-import { renderServiceStagePanel } from './sections.js';
-
-const HERO_SERVICES = SERVICES.slice(0, 6);
 
 export function initFAQ() {
   document.querySelectorAll('[data-faq-item]').forEach((item) => {
@@ -18,38 +14,6 @@ export function initFAQ() {
           other.classList.remove('is-open');
           other.querySelector('.faq-trigger')?.setAttribute('aria-expanded', 'false');
         }
-      });
-    });
-  });
-}
-
-export function initServiceStage() {
-  const stage = document.querySelector('[data-service-stage]');
-  if (!stage) return;
-
-  const panel = stage.querySelector('[data-service-panel]');
-  const items = stage.querySelectorAll('[data-service-index]');
-
-  items.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const index = parseInt(btn.dataset.serviceIndex, 10);
-      const service = HERO_SERVICES[index];
-      if (!service || !panel) return;
-
-      items.forEach((b) => {
-        b.classList.toggle('is-active', b === btn);
-        b.setAttribute('aria-expanded', String(b === btn));
-      });
-
-      panel.style.opacity = '0';
-      panel.style.transform = 'translateY(12px)';
-      requestAnimationFrame(() => {
-        panel.innerHTML = renderServiceStagePanel(service);
-        requestAnimationFrame(() => {
-          panel.style.transition = 'opacity 0.45s cubic-bezier(0.16,1,0.3,1), transform 0.45s cubic-bezier(0.16,1,0.3,1)';
-          panel.style.opacity = '1';
-          panel.style.transform = 'translateY(0)';
-        });
       });
     });
   });
@@ -96,8 +60,6 @@ export function initProcessStory() {
 }
 
 export function initHomeInteractions() {
-  initFAQ();
-  initServiceStage();
   initProcessStory();
 }
 

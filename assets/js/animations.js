@@ -1,5 +1,5 @@
 /**
- * DSYNZ Motion ù Lenis, GSAP timelines, scroll storytelling
+ * DSYNZ Motion ÔøΩ Lenis, GSAP timelines, scroll storytelling
  */
 import gsap from 'https://esm.sh/gsap@3.12.5';
 import { ScrollTrigger } from 'https://esm.sh/gsap@3.12.5/ScrollTrigger';

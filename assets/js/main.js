@@ -1,5 +1,5 @@
 /**
- * DSYNZ Core ù theme, navigation, loader, smooth interactions
+ * DSYNZ Core ÔøΩ theme, navigation, loader, smooth interactions
  */
 import {
   renderNavbar,

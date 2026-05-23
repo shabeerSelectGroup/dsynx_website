@@ -401,7 +401,7 @@
     .bento-span-6 { grid-column: span 6; }
   }
 
-  /* Services ù uniform horizontal cards */
+  /* Services ÔøΩ uniform horizontal cards */
   .services-track {
     display: grid;
     gap: 1rem;
@@ -787,7 +787,7 @@
   }
 }
 
-/* Critical elite overrides (unlayered ó must load after Tailwind layers) */
+/* Critical elite overrides (unlayered ÔøΩ must load after Tailwind layers) */
 .hero-headline {
   font-family: 'Archivo Black', system-ui, sans-serif;
   font-size: clamp(3rem, 8vw + 1rem, 6.5rem);

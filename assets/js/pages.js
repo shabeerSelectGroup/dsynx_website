@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (grid) {
       grid.innerHTML = `<div class="services-track" role="list">${SERVICES.map((s, i) => renderServiceCard(s, i)).join('')}</div>`;
     }
-    cta.innerHTML = renderCTA({ title: 'Architect your next advantage.', primaryLabel: 'Book discovery' });
+    cta.innerHTML = renderCTA();
   } else if (page === 'projects') {
     const grid = document.getElementById('projects-grid');
     if (grid) {
@@ -30,14 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
       grid.setAttribute('role', 'list');
     }
     cta.innerHTML = renderCTA({
-      title: 'Your transformation starts with a conversation.',
-      subtitle: 'Share the challenge. We will define what elite execution looks like for your organization.',
+      title: 'Ready to build something purposeful?',
+      subtitle: 'Share where you are today. We will help you clarify the path forward.',
     });
   } else if (page === 'process') {
     initProcessStory();
-    cta.innerHTML = renderCTA({ secondaryLabel: 'View capabilities', secondaryHref: 'services.html' });
+    cta.innerHTML = renderCTA({ secondaryLabel: 'Explore What We Do', secondaryHref: 'services.html' });
   } else if (page === 'about') {
-    cta.innerHTML = renderCTA({ title: 'Partner with a team that shares your standard.', primaryLabel: 'Work with us' });
+    cta.innerHTML = renderCTA({ title: 'Know more about DSYNZ', primaryLabel: 'Start with Clarity' });
   } else {
     cta.innerHTML = renderCTA();
   }

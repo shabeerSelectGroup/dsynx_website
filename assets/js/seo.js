@@ -10,7 +10,7 @@ const DSYNZ_ORG = {
   logo: 'https://dsynz.com/assets/favicon/favicon.svg',
   slogan: 'We design unbeatable businesses.',
   description:
-    'Strategy-led technology partner for growing businesses. Custom software, AI solutions, and digital transformation.',
+    'DSYNZ helps ambitious businesses clarify ideas, design purposeful digital products, and build technology solutions that create real business growth.',
   sameAs: [
     'https://linkedin.com/company/dsynz',
     'https://twitter.com/dsynz',
