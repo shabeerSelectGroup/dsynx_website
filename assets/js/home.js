@@ -13,13 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
   initHomeInteractions();
 
   scheduleVisualEnhancements(async () => {
-    const [{ initHeroGlobe }, { initWireframeIcons }, { initWorkVisual }] = await Promise.all([
+    const [{ initHeroGlobe }, { initWireframeIcons }, { initWorkVisual }, { initLaunchRocket3D }] = await Promise.all([
       import('./hero-globe.js'),
       import('./wireframe-icons.js'),
       import('./work-visual.js'),
+      import('./launch-rocket-3d.js'),
     ]);
     initHeroGlobe();
     initWireframeIcons();
     initWorkVisual();
+    initLaunchRocket3D();
+    const { ScrollTrigger } = await import('../vendor/gsap/ScrollTrigger.js');
+    ScrollTrigger.refresh();
   });
 });

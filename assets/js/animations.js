@@ -320,6 +320,11 @@ function initCTAMega() {
   });
 }
 
+function initLaunchRocket() {
+  if (!document.querySelector('[data-launch-rocket]')) return;
+  // 3D rocket + scroll launch handled by launch-rocket-3d.js (loaded from home.js)
+}
+
 export function initAnimations() {
   initRevealFallback();
   initSmoothScroll();
@@ -333,6 +338,7 @@ export function initAnimations() {
     initSectionGlow();
     initTechCells();
     initCTAMega();
+    initLaunchRocket();
     initMagneticButtons();
     ScrollTrigger.refresh();
   } catch (e) {
