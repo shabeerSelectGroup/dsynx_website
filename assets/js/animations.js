@@ -1,9 +1,9 @@
 /**
  * DSYNZ Motion � Lenis, GSAP timelines, scroll storytelling
  */
-import gsap from 'https://esm.sh/gsap@3.12.5';
-import { ScrollTrigger } from 'https://esm.sh/gsap@3.12.5/ScrollTrigger';
-import Lenis from 'https://esm.sh/lenis@1.1.18';
+import gsap from '../vendor/gsap/index.js';
+import { ScrollTrigger } from '../vendor/gsap/ScrollTrigger.js';
+import Lenis from '../vendor/lenis/lenis.mjs';
 
 gsap.registerPlugin(ScrollTrigger);
 

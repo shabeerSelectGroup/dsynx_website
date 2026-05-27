@@ -1,7 +1,7 @@
 /**
  * DSYNZ — Process hero 3D growth-loop word cloud
  */
-import * as THREE from 'https://esm.sh/three@0.170.0';
+import * as THREE from '../vendor/three/three.module.js';
 
 const MIN_WIDTH = 1024;
 

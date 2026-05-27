@@ -219,12 +219,15 @@
   .btn-secondary {
     @apply btn border backdrop-blur-sm;
     border-color: var(--color-border);
-    background-color: color-mix(in srgb, var(--color-bg-elevated) 50%, transparent);
+    /* Dark neutral pill (matches screenshot 2) */
+    background-color: color-mix(in srgb, var(--color-bg) 35%, transparent);
     color: var(--color-text);
   }
 
   .btn-secondary:hover {
-    @apply border-brand/40 text-brand;
+    @apply border-brand/30;
+    background-color: color-mix(in srgb, var(--color-brand) 10%, transparent);
+    color: var(--color-text);
   }
 
   .btn-ghost {

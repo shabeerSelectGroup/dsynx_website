@@ -1,7 +1,7 @@
 /**
  * DSYNZ — Work section orbital wireframe sculpture (Three.js)
  */
-import * as THREE from 'https://esm.sh/three@0.170.0';
+import * as THREE from '../vendor/three/three.module.js';
 
 const BRAND = 0x7c3aed;
 const GLOW = 0xb794f6;

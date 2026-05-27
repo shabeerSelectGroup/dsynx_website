@@ -40,4 +40,24 @@
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
   </url>
+  <url>
+    <loc>https://dsynz.com/blog/business-clarity-before-technology.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dsynz.com/blog/ai-when-problem-is-clear.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dsynz.com/blog/mvp-test-value-not-features.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dsynz.com/blog/website-more-than-look-good.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

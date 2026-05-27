@@ -1,7 +1,7 @@
 /**
  * DSYNZ — Shared wireframe 3D icons (single WebGL context per section)
  */
-import * as THREE from 'https://esm.sh/three@0.170.0';
+import * as THREE from '../vendor/three/three.module.js';
 
 const PURPLE = 0x7c3aed;
 

@@ -25,7 +25,7 @@ assets/
   css/          input.css + dsynz-elite.css → main.css
   js/
     brand.js        Positioning & structured copy
-    sections.js     Home + shared section renderers
+    interactions.js Home service tabs, FAQ, process story toggles
     components.js   Nav, footer, forms, cards
     interactions.js Service stage, process, FAQ
     animations.js   Lenis + GSAP motion

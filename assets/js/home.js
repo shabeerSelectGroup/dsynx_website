@@ -1,14 +1,25 @@
-import { renderHomePage } from './sections.js';
 import { initHomeInteractions } from './interactions.js';
-import { initHeroGlobe } from './hero-globe.js';
-import { initWireframeIcons } from './wireframe-icons.js';
-import { initWorkVisual } from './work-visual.js';
+
+function scheduleVisualEnhancements(run) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(run, { timeout: 2500 });
+  } else {
+    setTimeout(run, 50);
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-  const mount = document.getElementById('home-mount');
-  if (mount) mount.innerHTML = renderHomePage();
   initHomeInteractions();
-  initHeroGlobe();
-  initWireframeIcons();
-  initWorkVisual();
+
+  scheduleVisualEnhancements(async () => {
+    const [{ initHeroGlobe }, { initWireframeIcons }, { initWorkVisual }] = await Promise.all([
+      import('./hero-globe.js'),
+      import('./wireframe-icons.js'),
+      import('./work-visual.js'),
+    ]);
+    initHeroGlobe();
+    initWireframeIcons();
+    initWorkVisual();
+  });
 });

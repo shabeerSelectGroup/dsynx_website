@@ -707,6 +707,18 @@
     background: var(--color-surface);
   }
 
+  .service-stage-panel-inner {
+    display: none;
+  }
+
+  .service-stage-panel-inner.is-active {
+    display: block;
+  }
+
+  .service-stage-panel-inner[hidden] {
+    display: none !important;
+  }
+
   .service-stage-visual {
     position: absolute;
     right: -10%;

@@ -1,7 +1,7 @@
 /**
  * DSYNZ — Dot globe visuals (Three.js) with shared page-wide pointer tracking
  */
-import * as THREE from 'https://esm.sh/three@0.170.0';
+import * as THREE from '../vendor/three/three.module.js';
 
 const BRAND_PURPLE = 0x7c3aed;
 const ROT_LERP = 0.065;

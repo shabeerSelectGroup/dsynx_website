@@ -104,6 +104,36 @@ function initMobileMenu() {
   });
 }
 
+function initActiveNavState() {
+  const current = window.location.pathname.split('/').pop() || 'index.html';
+  const desktopInactive = ['text-[var(--color-text-muted)]', 'hover:text-[var(--color-text)]'];
+  const mobileInactive = ['text-[var(--color-text)]', 'hover:bg-brand/5'];
+  const desktopActive = 'text-brand';
+  const mobileActive = ['bg-brand/10', 'text-brand'];
+
+  document.querySelectorAll('#site-nav .nav-link').forEach((link) => {
+    const active = link.getAttribute('href') === current || (current === '' && link.getAttribute('href') === 'index.html');
+    link.classList.toggle(desktopActive, active);
+    desktopInactive.forEach((cls) => link.classList.toggle(cls, !active));
+    if (active) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
+
+  document.querySelectorAll('#mobile-menu a:not(.btn-primary)').forEach((link) => {
+    const active = link.getAttribute('href') === current || (current === '' && link.getAttribute('href') === 'index.html');
+    mobileActive.forEach((cls) => link.classList.toggle(cls, active));
+    mobileInactive.forEach((cls) => link.classList.toggle(cls, !active));
+    if (active) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
+}
+
 function initThemeToggle() {
   document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 }
@@ -187,9 +217,9 @@ function mountLayout() {
   const footerSlot = document.getElementById('site-footer');
   const loaderSlot = document.getElementById('site-loader');
 
-  if (loaderSlot) loaderSlot.innerHTML = renderPageLoader();
-  if (navSlot) navSlot.innerHTML = renderNavbar();
-  if (footerSlot) footerSlot.innerHTML = renderFooter();
+  if (loaderSlot && !loaderSlot.innerHTML.trim()) loaderSlot.innerHTML = renderPageLoader();
+  if (navSlot && !navSlot.innerHTML.trim()) navSlot.innerHTML = renderNavbar();
+  if (footerSlot && !footerSlot.innerHTML.trim()) footerSlot.innerHTML = renderFooter();
 }
 
 export function initApp(options = {}) {
@@ -199,6 +229,7 @@ export function initApp(options = {}) {
   initTheme();
   mountLayout();
   initNavScroll();
+  initActiveNavState();
   initMobileMenu();
   initThemeToggle();
   initPageLoader();
@@ -208,6 +239,11 @@ export function initApp(options = {}) {
   initAnchorScroll();
 
   const pageType = options.pageType || 'home';
+  const hasInlineSchema = document.head.querySelector('script[type="application/ld+json"]');
+  if (hasInlineSchema) {
+    return;
+  }
+
   if (options.schema) {
     injectSchema(options.schema);
   } else if (options.pageTitle && options.pageDescription && options.pageUrl) {
