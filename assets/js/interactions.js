@@ -32,6 +32,10 @@ export function initServiceStage() {
       const active = parseInt(panel.dataset.servicePanel, 10) === index;
       panel.classList.toggle('is-active', active);
       panel.hidden = !active;
+
+      // `dsynz-elite.css` shows content only when `.service-stage-panel-inner.is-active`.
+      const inner = panel.querySelector('.service-stage-panel-inner');
+      if (inner) inner.classList.toggle('is-active', active);
     });
     items.forEach((btn) => {
       const active = parseInt(btn.dataset.serviceIndex, 10) === index;
@@ -87,10 +91,108 @@ export function initProcessStory() {
   }
 }
 
+export function initPositioningTyping() {
+  const hosts = document.querySelectorAll('[data-typing]');
+  if (!hosts.length) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  hosts.forEach((host) => {
+    const text = host.dataset.typing || '';
+    const output = host.querySelector('[data-typing-output]');
+    if (!text || !output) return;
+
+    if (reducedMotion) {
+      output.textContent = text;
+      host.classList.add('is-complete');
+      return;
+    }
+
+    output.textContent = '';
+
+    let timerId = null;
+    let active = false;
+
+    const clearTimer = () => {
+      if (timerId !== null) {
+        window.clearTimeout(timerId);
+        timerId = null;
+      }
+    };
+
+    const schedule = (fn, delay) => {
+      clearTimer();
+      timerId = window.setTimeout(fn, delay);
+    };
+
+    const runLoop = () => {
+      if (!active) return;
+
+      let index = 0;
+      host.classList.remove('is-complete');
+
+      const typeForward = () => {
+        if (!active) return;
+        output.textContent = text.slice(0, index);
+        if (index < text.length) {
+          index += 1;
+          schedule(typeForward, 62);
+          return;
+        }
+        schedule(deleteBackward, 2000);
+      };
+
+      const deleteBackward = () => {
+        if (!active) return;
+        if (index > 0) {
+          index -= 1;
+          output.textContent = text.slice(0, index);
+          schedule(deleteBackward, 36);
+          return;
+        }
+        schedule(typeForward, 480);
+      };
+
+      typeForward();
+    };
+
+    const start = () => {
+      if (active) return;
+      active = true;
+      runLoop();
+    };
+
+    const stop = () => {
+      active = false;
+      clearTimer();
+      output.textContent = '';
+      host.classList.remove('is-complete');
+    };
+
+    const section = host.closest('#positioning') || host;
+    if (typeof IntersectionObserver === 'undefined') {
+      start();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) start();
+          else stop();
+        });
+      },
+      { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }
+    );
+    observer.observe(section);
+  });
+}
+
 export function initHomeInteractions() {
   initFAQ();
   initServiceStage();
   initProcessStory();
+  initPositioningTyping();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

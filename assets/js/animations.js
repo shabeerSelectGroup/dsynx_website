@@ -10,6 +10,54 @@ gsap.registerPlugin(ScrollTrigger);
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let lenis = null;
 
+/** Grids whose children are revealed as a batch — skip per-child scroll reveals to avoid hidden cards. */
+const STAGGER_GRID_SELECTORS = [
+  '.growth-loop-grid',
+  '.services-track',
+  '#engagement-grid',
+  '#services-engagement-grid',
+  '.core-services-grid',
+  '.secondary-services-grid',
+  '.build-items-grid',
+  '.process-step-cards',
+  '.process-principles-grid',
+  '.process-expect-grid',
+  '.process-engage-grid',
+  '.process-start-grid',
+  '.work-categories-grid',
+  '.work-case-grid',
+  '.work-format-grid',
+  '.work-proof-grid',
+  '.work-difference-grid',
+  '.about-diff-grid',
+  '.about-values-grid',
+  '.about-culture-grid',
+  '.about-stand-grid',
+  '.insight-featured-grid',
+  '.insight-category-grid',
+  '.insight-articles-stack',
+  '.contact-steps',
+  '.contact-reasons-grid',
+  '.contact-faq-list',
+  '.tech-matrix',
+  '.content-cards',
+];
+
+function isStaggerGrid(el) {
+  return STAGGER_GRID_SELECTORS.some((sel) => el.matches(sel));
+}
+
+function isStaggerGridChild(el) {
+  return STAGGER_GRID_SELECTORS.some((sel) => el.closest(sel) && !el.matches(sel));
+}
+
+function markGridChildrenVisible(grid) {
+  [...grid.children].forEach((child) => {
+    child.classList.add('is-visible');
+    gsap.set(child, { clearProps: 'opacity,transform' });
+  });
+}
+
 export function getLenis() {
   return lenis;
 }
@@ -34,6 +82,8 @@ export function initSmoothScroll() {
 
 function initRevealFallback() {
   document.querySelectorAll('.reveal').forEach((el) => {
+    if (isStaggerGrid(el) || isStaggerGridChild(el)) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -115,65 +165,71 @@ function initScrollReveals() {
     return;
   }
 
-  gsap.utils.toArray('.reveal').filter((el) => !el.closest('.hero-cinematic')).forEach((el) => {
-    const delay = parseFloat(el.dataset.stagger || '0') * 0.07;
-    gsap.fromTo(
-      el,
-      { y: 56, opacity: 0, scale: 0.98 },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 1.05,
-        delay,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
-      }
-    );
-  });
+  gsap.utils
+    .toArray('.reveal')
+    .filter((el) => !el.closest('.hero-cinematic'))
+    .filter((el) => !isStaggerGrid(el) && !isStaggerGridChild(el))
+    .forEach((el) => {
+      const delay = parseFloat(el.dataset.stagger || '0') * 0.07;
+      gsap.fromTo(
+        el,
+        { y: 56, opacity: 0, scale: 0.98 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1.05,
+          delay,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+          onComplete: () => el.classList.add('is-visible'),
+        }
+      );
+    });
 }
 
 function initStaggerGrids() {
-  if (prefersReducedMotion) return;
+  if (prefersReducedMotion) {
+    document.querySelectorAll(STAGGER_GRID_SELECTORS.join(',')).forEach((grid) => {
+      markGridChildrenVisible(grid);
+    });
+    return;
+  }
 
-  [
-    '.services-track',
-    '#engagement-grid',
-    '#services-engagement-grid',
-    '.core-services-grid',
-    '.secondary-services-grid',
-    '.build-items-grid',
-    '.process-step-cards',
-    '.process-principles-grid',
-    '.process-expect-grid',
-    '.process-engage-grid',
-    '.process-start-grid',
-    '.work-categories-grid',
-    '.work-case-grid',
-    '.work-format-grid',
-    '.work-proof-grid',
-    '.work-difference-grid',
-    '.about-diff-grid',
-    '.about-values-grid',
-    '.about-culture-grid',
-    '.about-stand-grid',
-    '.insight-featured-grid',
-    '.insight-category-grid',
-    '.insight-articles-stack',
-    '.contact-steps',
-    '.contact-reasons-grid',
-    '.contact-faq-list',
-    '.tech-matrix',
-  ].forEach((selector) => {
-    const grid = document.querySelector(selector);
-    if (!grid?.children.length) return;
-    gsap.from(grid.children, {
-      y: 48,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.08,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: grid, start: 'top 85%' },
+  STAGGER_GRID_SELECTORS.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((grid) => {
+      if (!grid?.children.length) return;
+
+      if (grid.classList.contains('reveal')) {
+        grid.classList.add('is-visible');
+        gsap.set(grid, { clearProps: 'opacity,transform' });
+      }
+
+      const children = [...grid.children];
+      const gridInView = grid.getBoundingClientRect().top < window.innerHeight * 0.88;
+
+      if (gridInView) {
+        markGridChildrenVisible(grid);
+        return;
+      }
+
+      gsap.fromTo(
+        children,
+        { y: 48, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.08,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: grid,
+            start: 'top 88%',
+            once: true,
+          },
+          onComplete: () => markGridChildrenVisible(grid),
+        }
+      );
     });
   });
 

@@ -10,7 +10,6 @@ import {
   PROCESS_ENGAGE,
   PROCESS_GOOD_FIT,
   PROCESS_NOT_FIT,
-  PROCESS_SERVICE_LINKS,
   PROCESS_LOOP_RIBBON,
 } from './process-content.js';
 import { svgIcon } from './components.js';
@@ -39,8 +38,11 @@ function renderGrowthStepCard(step, index) {
           <p class="process-step-card-subtitle">${step.subtitle}</p>
         </div>
       </div>
-      <p class="process-step-card-body">${step.content}</p>
       <div class="process-step-card-details">
+        <div class="process-step-detail-block process-step-overview">
+          <h4 class="process-step-detail-label">Overview</h4>
+          <p class="process-step-card-body">${step.content}</p>
+        </div>
         <div class="process-step-detail-block">
           <h4 class="process-step-detail-label">What happens here</h4>
           ${renderBulletList(step.activities)}
@@ -123,10 +125,6 @@ export function renderProcessPage() {
       <p class="process-engage-best"><span class="process-engage-best-label">Best for:</span> ${model.bestFor}</p>
     </article>`
   ).join('');
-  const serviceLinks = PROCESS_SERVICE_LINKS.map(
-    (link) => `<li><a href="${link.href}" class="process-service-link">${link.title}</a></li>`
-  ).join('');
-
   return `
     <section class="section-editorial process-intro" aria-labelledby="process-intro-heading" data-section>
       <div class="container-wide">
@@ -249,8 +247,7 @@ export function renderProcessPage() {
           <p class="mt-6 text-lead text-muted">The DSYNZ Growth Loop applies across everything we create.</p>
           <p class="mt-6 text-lead">Whether we are working on a business website, custom web application, mobile app, SaaS platform, business portal, automation system, or product concept, the same principle applies: understand first, build with purpose, improve for growth.</p>
         </div>
-        <ul class="process-service-links mt-12 reveal">${serviceLinks}</ul>
-        <a href="services.html" class="btn-secondary btn-magnetic mt-10 inline-flex reveal" data-magnetic>Explore What We Do</a>
+        <a href="services.html" class="btn btn-primary btn-magnetic mt-10 inline-flex reveal" data-magnetic>Explore What We Do</a>
       </div>
     </section>
   `;

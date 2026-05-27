@@ -325,34 +325,42 @@ export const SERVICES_CORE = [
 
 export const SERVICES_SECONDARY = [
   {
+    icon: 'palette',
     title: 'UI/UX Design',
     text: 'User flows, interfaces, wireframes, and experiences designed for clarity and ease of use.',
   },
   {
+    icon: 'cart',
     title: 'eCommerce Development',
     text: 'Online stores and commerce experiences built to communicate trust, simplify buying, and support growth.',
   },
   {
+    icon: 'brand',
     title: 'Branding & Identity',
     text: 'Visual identity, brand direction, and digital brand systems that help businesses present themselves with confidence.',
   },
   {
+    icon: 'sparkle',
     title: 'AI Chatbot & Integration',
     text: 'Practical AI integrations and chatbot experiences that improve guidance, support, search, or customer interaction.',
   },
   {
+    icon: 'zap',
     title: 'Business Automation',
     text: 'Automation ideas and systems that reduce manual work and improve operational efficiency.',
   },
   {
+    icon: 'wrench',
     title: 'Maintenance & Support',
     text: 'Ongoing support to keep websites, applications, and systems stable, updated, and reliable.',
   },
   {
+    icon: 'cloud',
     title: 'Hosting & Server Management',
     text: 'Hosting, deployment, and server support for stable and secure digital delivery.',
   },
   {
+    icon: 'chart',
     title: 'Data Dashboards & Reporting',
     text: 'Dashboards and reporting tools that help businesses understand activity, performance, and decision points.',
   },
@@ -360,50 +368,62 @@ export const SERVICES_SECONDARY = [
 
 export const SERVICES_BUILD_ITEMS = [
   {
+    icon: 'layers',
     title: 'Custom SaaS Products',
     text: 'Digital platforms designed to serve users, manage workflows, and grow as products.',
   },
   {
+    icon: 'squares',
     title: 'Business Portals',
     text: 'Customer, partner, team, or admin portals that centralize important business activity.',
   },
   {
+    icon: 'refresh',
     title: 'Digital Transformation Projects',
     text: 'Technology-led improvements that help businesses modernize operations, service delivery, or customer experience.',
   },
   {
+    icon: 'brand',
     title: 'Brand + Website Revamps',
     text: 'Sharper positioning, clearer structure, and modern websites that better reflect business value.',
   },
   {
+    icon: 'mobile',
     title: 'Mobile Apps',
     text: 'Apps designed for customers, teams, operations, booking, service delivery, or product experiences.',
   },
   {
+    icon: 'globe',
     title: 'Company Websites',
     text: 'Professional websites that build trust, explain value, and support enquiries or sales.',
   },
   {
+    icon: 'clipboard',
     title: 'Internal Workflow Tools',
     text: 'Custom tools that reduce manual work, organize processes, and improve team efficiency.',
   },
   {
+    icon: 'calendar',
     title: 'Booking Platforms',
     text: 'Systems for appointments, rentals, travel, services, rooms, seats, events, or resource management.',
   },
   {
+    icon: 'rocket',
     title: 'MVPs for Founders',
     text: 'Focused first versions of digital products that help founders test, launch, and learn.',
   },
   {
+    icon: 'sparkle',
     title: 'AI-Enabled Tools & Chatbots',
     text: 'Practical AI layers that improve guidance, support, recommendations, search, or internal workflows.',
   },
   {
+    icon: 'cart',
     title: 'eCommerce Stores',
     text: 'Online commerce experiences designed for usability, trust, and growth.',
   },
   {
+    icon: 'zap',
     title: 'Automation Systems',
     text: 'Smart process improvements that reduce repetitive work and improve consistency.',
   },
