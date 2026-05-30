@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# www → non-www (matches your canonical URLs)
+RewriteCond %{HTTP_HOST} ^www\.dsynz\.com$ [NC]
+RewriteRule ^ https://dsynz.com%{REQUEST_URI} [L,R=301]
+
+AddType application/javascript .js
+AddType application/javascript .mjs
+

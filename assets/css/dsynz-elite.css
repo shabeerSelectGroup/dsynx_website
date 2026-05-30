@@ -849,6 +849,11 @@
     display: none;
   }
 
+  /* Fallback: if JS doesn't run, show the pre-marked active panel. */
+  .service-stage-detail.is-active .service-stage-panel-inner {
+    display: block;
+  }
+
   .service-stage-panel-inner.is-active {
     display: block;
   }
@@ -1269,10 +1274,6 @@
     background: color-mix(in srgb, var(--glass-bg) 95%, transparent);
   }
 
-  #site-header.is-scrolled .nav-mark {
-    opacity: 1;
-  }
-
   .site-logo-link {
     line-height: 0;
   }
@@ -1283,13 +1284,7 @@
   }
 
   .nav-mark {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-brand);
-    box-shadow: 0 0 12px var(--color-brand);
-    opacity: 0;
-    transition: opacity 0.4s;
+    display: none;
   }
 
   .cursor-dot {

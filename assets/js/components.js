@@ -164,6 +164,7 @@ export function renderFooter() {
               <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)]">Company</h3>
               <ul class="mt-4 space-y-3">
                 <li><a href="about.html" class="text-sm text-muted hover:text-brand">About</a></li>
+                <li><a href="services.html" class="text-sm text-muted hover:text-brand">What We Do</a></li>
                 <li><a href="process.html" class="text-sm text-muted hover:text-brand">How We Work</a></li>
                 <li><a href="projects.html" class="text-sm text-muted hover:text-brand">Work</a></li>
                 <li><a href="careers.html" class="text-sm text-muted hover:text-brand">Careers</a></li>
