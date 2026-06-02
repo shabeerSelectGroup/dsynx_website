@@ -87,6 +87,20 @@
   /* Who we help — misty waves background (non-grid) */
   .who-mist {
     overflow: hidden;
+    position: relative;
+  }
+
+  /* Static fallback if animated layers fail to paint (older cached CSS, reduced GPU) */
+  .who-mist::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 55% at 22% 48%, rgba(124, 58, 237, 0.22), transparent 62%),
+      radial-gradient(ellipse 70% 50% at 78% 52%, rgba(99, 102, 241, 0.14), transparent 65%);
+    opacity: 1;
   }
 
   .who-mist-bg {
@@ -784,10 +798,20 @@
     box-shadow: var(--shadow-card);
   }
 
+  .service-stage-panels {
+    position: relative;
+    min-height: 320px;
+  }
+
   @media (min-width: 1024px) {
     .service-stage {
       grid-template-columns: minmax(200px, 280px) 1fr;
       padding: 1.5rem;
+    }
+
+    .service-stage-panels {
+      grid-column: 2;
+      grid-row: 1;
     }
   }
 
@@ -836,6 +860,7 @@
   }
 
   .service-stage-detail {
+    display: none;
     position: relative;
     min-height: 320px;
     border-radius: 1rem;
@@ -845,21 +870,12 @@
     background: var(--color-surface);
   }
 
+  .service-stage-detail.is-active {
+    display: block;
+  }
+
   .service-stage-panel-inner {
-    display: none;
-  }
-
-  /* Fallback: if JS doesn't run, show the pre-marked active panel. */
-  .service-stage-detail.is-active .service-stage-panel-inner {
     display: block;
-  }
-
-  .service-stage-panel-inner.is-active {
-    display: block;
-  }
-
-  .service-stage-panel-inner[hidden] {
-    display: none !important;
   }
 
   .service-stage-visual {
@@ -1703,26 +1719,44 @@
 
   .launch-rocket {
     position: relative;
-    width: min(100%, 13rem);
-    height: 16rem;
+    width: min(100%, 24rem);
+    height: 22rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     overflow: visible;
+    padding-bottom: 1.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    .launch-rocket {
+      width: min(100%, 26rem);
+      height: 24rem;
+    }
   }
 
   .launch-rocket-stack {
     position: relative;
     z-index: 2;
     width: 100%;
-    height: 13.75rem;
+    height: 19rem;
     will-change: transform, opacity;
+  }
+
+  @media (min-width: 1024px) {
+    .launch-rocket-stack {
+      height: 21rem;
+    }
   }
 
   .launch-rocket-canvas {
     width: 100%;
     height: 100%;
+    filter:
+      drop-shadow(0 0 18px rgba(124, 58, 237, 0.55))
+      drop-shadow(0 0 42px rgba(183, 148, 246, 0.28))
+      drop-shadow(0 0 72px rgba(167, 139, 250, 0.14));
   }
 
   .launch-rocket-canvas canvas {
@@ -1735,12 +1769,12 @@
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 5.5rem;
-    height: 0.55rem;
+    width: 9rem;
+    height: 0.65rem;
     border-radius: 9999px;
-    background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.45), transparent);
+    background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.5), transparent);
     transform: translateX(-50%);
-    box-shadow: 0 0 18px rgba(124, 58, 237, 0.35);
+    box-shadow: 0 0 24px rgba(124, 58, 237, 0.45);
     transform-origin: center;
     will-change: transform, opacity;
   }

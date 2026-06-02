@@ -32,10 +32,6 @@ export function initServiceStage() {
       const active = parseInt(panel.dataset.servicePanel, 10) === index;
       panel.classList.toggle('is-active', active);
       panel.hidden = !active;
-
-      // `dsynz-elite.css` shows content only when `.service-stage-panel-inner.is-active`.
-      const inner = panel.querySelector('.service-stage-panel-inner');
-      if (inner) inner.classList.toggle('is-active', active);
     });
     items.forEach((btn) => {
       const active = parseInt(btn.dataset.serviceIndex, 10) === index;

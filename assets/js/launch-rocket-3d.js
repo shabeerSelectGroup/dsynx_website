@@ -1,5 +1,5 @@
 /**
- * DSYNZ — Dot-outline 3D launch rocket (matches hero globe style)
+ * DSYNZ — Brand wireframe space shuttle stack (growth-loop hero visual)
  */
 import * as THREE from '../vendor/three/three.module.js';
 import gsap from '../vendor/gsap/index.js';
@@ -15,130 +15,193 @@ function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
-function appendGeometryDots(geometry, matrix, target, step = 1) {
-  const pos = geometry.attributes.position;
-  const v = new THREE.Vector3();
+function buildWireframeRocket() {
+  const disposables = [];
+  const shuttle = new THREE.Group();
+  const SEG_R = 36;
+  const SEG_H = 12;
 
-  for (let i = 0; i < pos.count; i += step) {
-    v.fromBufferAttribute(pos, i);
-    v.applyMatrix4(matrix);
-    target.push(v.x, v.y, v.z);
+  const addWire = (geometry) => {
+    const glowGeo = geometry.clone();
+    const auraGeo = geometry.clone();
+
+    const auraMat = new THREE.MeshBasicMaterial({
+      color: GLOW_SOFT,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.2,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const aura = new THREE.Mesh(auraGeo, auraMat);
+    aura.scale.setScalar(1.14);
+
+    const glowMat = new THREE.MeshBasicMaterial({
+      color: GLOW,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.48,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const glow = new THREE.Mesh(glowGeo, glowMat);
+    glow.scale.setScalar(1.08);
+
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: BRAND,
+      wireframe: true,
+      transparent: true,
+      opacity: 1,
+    });
+    const wire = new THREE.Mesh(geometry, wireMat);
+
+    const part = new THREE.Group();
+    part.add(aura);
+    part.add(glow);
+    part.add(wire);
+    disposables.push({
+      geometry,
+      glowGeo,
+      auraGeo,
+      materials: [wireMat, glowMat, auraMat],
+    });
+    return part;
+  };
+
+  const addPart = (geometry, x, y, z, rotX = 0, rotY = 0, rotZ = 0) => {
+    const part = addWire(geometry);
+    part.position.set(x, y, z);
+    part.rotation.set(rotX, rotY, rotZ);
+    shuttle.add(part);
+    return part;
+  };
+
+  const addRing = (radius, y, tube = 0.01) => {
+    addPart(new THREE.TorusGeometry(radius, tube, 8, SEG_R), 0, y, 0, Math.PI / 2, 0, 0);
+  };
+
+  // External fuel tank — central spine
+  addPart(new THREE.CylinderGeometry(0.34, 0.36, 2.05, SEG_R, SEG_H), 0, 0, 0);
+  addPart(new THREE.ConeGeometry(0.34, 0.38, SEG_R, 6), 0, 1.22, 0);
+  addPart(new THREE.CylinderGeometry(0.36, 0.34, 0.14, SEG_R, 2), 0, -1.1, 0);
+
+  for (let i = 0; i < 6; i += 1) {
+    addRing(0.358, -0.75 + i * 0.3, 0.009);
   }
-}
 
-function buildDotRocket() {
-  const core = [];
-  const matrix = new THREE.Matrix4();
-  const pivot = new THREE.Vector3(0, 0.15, 0);
+  // Solid rocket boosters
+  const srbX = 0.54;
+  const srbY = -0.04;
+  addPart(new THREE.CylinderGeometry(0.13, 0.14, 1.78, SEG_R, 8), -srbX, srbY, 0);
+  addPart(new THREE.CylinderGeometry(0.13, 0.14, 1.78, SEG_R, 8), srbX, srbY, 0);
+  addPart(new THREE.ConeGeometry(0.13, 0.3, SEG_R, 5), -srbX, 0.98, 0);
+  addPart(new THREE.ConeGeometry(0.13, 0.3, SEG_R, 5), srbX, 0.98, 0);
+  addPart(new THREE.CylinderGeometry(0.09, 0.13, 0.22, 24, 3), -srbX, -1.08, 0);
+  addPart(new THREE.CylinderGeometry(0.09, 0.13, 0.22, 24, 3), srbX, -1.08, 0);
 
-  // Shuttle blueprint silhouette (vertical), colored via PointsMaterial (BRAND/GLOW).
-  // Fuselage
-  const fuselageGeo = new THREE.CylinderGeometry(0.28, 0.34, 1.55, 22, 10);
-  matrix.identity();
-  matrix.makeTranslation(0, 0.1, 0);
-  appendGeometryDots(fuselageGeo, matrix, core, 1);
-  fuselageGeo.dispose();
+  for (let i = 0; i < 4; i += 1) {
+    addPart(new THREE.TorusGeometry(0.142, 0.008, 6, SEG_R), -srbX, -0.5 + i * 0.38, 0, Math.PI / 2, 0, 0);
+    addPart(new THREE.TorusGeometry(0.142, 0.008, 6, SEG_R), srbX, -0.5 + i * 0.38, 0, Math.PI / 2, 0, 0);
+  }
 
-  // Nose cone
-  const noseGeo = new THREE.ConeGeometry(0.28, 0.62, 22, 6);
-  matrix.identity();
-  matrix.makeTranslation(0, 1.0, 0);
-  appendGeometryDots(noseGeo, matrix, core, 1);
-  noseGeo.dispose();
+  // SRB attach struts
+  addPart(new THREE.CylinderGeometry(0.025, 0.025, 0.38, 12, 1), -0.36, 0.35, 0, 0, 0, Math.PI / 2);
+  addPart(new THREE.CylinderGeometry(0.025, 0.025, 0.38, 12, 1), 0.36, 0.35, 0, 0, 0, Math.PI / 2);
+  addPart(new THREE.CylinderGeometry(0.025, 0.025, 0.38, 12, 1), -0.36, -0.45, 0, 0, 0, Math.PI / 2);
+  addPart(new THREE.CylinderGeometry(0.025, 0.025, 0.38, 12, 1), 0.36, -0.45, 0, 0, 0, Math.PI / 2);
 
-  // Engine bell cluster
-  const bellGeo = new THREE.CylinderGeometry(0.22, 0.3, 0.28, 18, 3);
-  matrix.identity();
-  matrix.makeTranslation(0, -0.78, 0);
-  appendGeometryDots(bellGeo, matrix, core, 1);
-  bellGeo.dispose();
+  // Orbiter fuselage — mounted on tank
+  const orbZ = 0.42;
+  addPart(new THREE.CylinderGeometry(0.16, 0.18, 1.05, SEG_R, 7), 0, 0.18, orbZ);
+  addPart(new THREE.ConeGeometry(0.16, 0.42, SEG_R, 6), 0, 0.92, orbZ);
+  addPart(new THREE.CylinderGeometry(0.18, 0.16, 0.28, SEG_R, 3), 0, -0.38, orbZ);
 
-  // Cockpit ring cue
-  const cockpitGeo = new THREE.TorusGeometry(0.14, 0.028, 10, 26);
-  matrix.identity();
-  matrix.makeRotationX(Math.PI / 2);
-  matrix.setPosition(0, 0.72, 0.26);
-  appendGeometryDots(cockpitGeo, matrix, core, 1);
-  cockpitGeo.dispose();
+  addPart(new THREE.TorusGeometry(0.175, 0.012, 8, SEG_R), 0, 0.22, orbZ, Math.PI / 2, 0, 0);
+  addPart(new THREE.TorusGeometry(0.175, 0.012, 8, SEG_R), 0, -0.02, orbZ, Math.PI / 2, 0, 0);
 
-  // Delta wings (thin extrude)
+  // Delta wings
   const wingShape = new THREE.Shape();
   wingShape.moveTo(0, 0);
-  wingShape.lineTo(0.85, -0.22);
-  wingShape.lineTo(0.28, -0.9);
-  wingShape.lineTo(0, -0.74);
+  wingShape.lineTo(0.82, -0.1);
+  wingShape.lineTo(0.72, -0.52);
+  wingShape.lineTo(0.08, -0.32);
   wingShape.closePath();
+  const wingGeo = new THREE.ExtrudeGeometry(wingShape, { depth: 0.045, bevelEnabled: false, steps: 1 });
 
-  const wingGeo = new THREE.ExtrudeGeometry(wingShape, { depth: 0.06, bevelEnabled: false, steps: 1 });
-  // Right wing
-  matrix.identity();
-  matrix.multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2));
-  matrix.multiply(new THREE.Matrix4().makeRotationY(Math.PI));
-  matrix.setPosition(0.02, -0.05, 0.03);
-  appendGeometryDots(wingGeo, matrix, core, 1);
-  // Left wing
-  matrix.identity();
-  matrix.multiply(new THREE.Matrix4().makeScale(-1, 1, 1));
-  matrix.multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2));
-  matrix.multiply(new THREE.Matrix4().makeRotationY(Math.PI));
-  matrix.setPosition(-0.02, -0.05, 0.03);
-  appendGeometryDots(wingGeo, matrix, core, 1);
+  const leftWing = addWire(wingGeo.clone());
+  leftWing.position.set(-0.04, 0.08, orbZ - 0.02);
+  shuttle.add(leftWing);
+
+  const rightWing = addWire(wingGeo.clone());
+  rightWing.scale.x = -1;
+  rightWing.position.set(0.04, 0.08, orbZ - 0.02);
+  shuttle.add(rightWing);
   wingGeo.dispose();
 
-  // Tail fin
+  // Vertical stabilizer
   const tailShape = new THREE.Shape();
   tailShape.moveTo(0, 0);
-  tailShape.lineTo(0.22, 0);
-  tailShape.lineTo(0.16, 0.45);
-  tailShape.lineTo(0, 0.36);
+  tailShape.lineTo(0.38, 0.02);
+  tailShape.lineTo(0.22, -0.55);
   tailShape.closePath();
-  const tailGeo = new THREE.ExtrudeGeometry(tailShape, { depth: 0.05, bevelEnabled: false, steps: 1 });
-  matrix.identity();
-  matrix.multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2));
-  matrix.setPosition(0, 0.35, -0.02);
-  appendGeometryDots(tailGeo, matrix, core, 1);
+  const tailGeo = new THREE.ExtrudeGeometry(tailShape, { depth: 0.035, bevelEnabled: false, steps: 1 });
+  const tail = addWire(tailGeo);
+  tail.position.set(0, 0.28, orbZ - 0.32);
+  tail.rotation.x = Math.PI / 2;
+  shuttle.add(tail);
   tailGeo.dispose();
 
-  const glow = [];
-  const v = new THREE.Vector3();
-  for (let i = 0; i < core.length; i += 3) {
-    v.set(core[i], core[i + 1], core[i + 2]);
-    v.sub(pivot).multiplyScalar(1.045).add(pivot);
-    glow.push(v.x, v.y, v.z);
-  }
+  // Orbiter OMS pods
+  addPart(new THREE.CylinderGeometry(0.05, 0.05, 0.22, 16, 2), -0.12, -0.08, orbZ - 0.12, Math.PI / 2, 0, 0);
+  addPart(new THREE.CylinderGeometry(0.05, 0.05, 0.22, 16, 2), 0.12, -0.08, orbZ - 0.12, Math.PI / 2, 0, 0);
 
-  const coreGeometry = new THREE.BufferGeometry();
-  coreGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(core), 3));
+  // Main engine bells (visible from elevated view)
+  addPart(new THREE.CylinderGeometry(0.06, 0.1, 0.16, 20, 2), -0.1, -0.58, orbZ);
+  addPart(new THREE.CylinderGeometry(0.06, 0.1, 0.16, 20, 2), 0.1, -0.58, orbZ);
+  addPart(new THREE.CylinderGeometry(0.06, 0.1, 0.16, 20, 2), 0, -0.62, orbZ);
 
-  const glowGeometry = new THREE.BufferGeometry();
-  glowGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(glow), 3));
-
-  const coreMaterial = new THREE.PointsMaterial({
-    color: BRAND,
-    size: 0.042,
-    sizeAttenuation: true,
+  // Blueprint-style silhouette halo (soft outer shell)
+  const haloGeo = new THREE.SphereGeometry(1.15, 24, 16);
+  const haloMat = new THREE.MeshBasicMaterial({
+    color: GLOW_SOFT,
+    wireframe: true,
     transparent: true,
-    opacity: 0.9,
+    opacity: 0.06,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
+  const halo = new THREE.Mesh(haloGeo, haloMat);
+  shuttle.add(halo);
+  disposables.push({ geometry: haloGeo, materials: [haloMat] });
 
-  const glowMaterial = new THREE.PointsMaterial({
-    color: GLOW,
-    size: 0.065,
-    sizeAttenuation: true,
-    transparent: true,
-    opacity: 0.32,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  });
+  shuttle.rotation.set(0.04, 0.18, 0);
 
   const group = new THREE.Group();
-  group.add(new THREE.Points(glowGeometry, glowMaterial));
-  group.add(new THREE.Points(coreGeometry, coreMaterial));
-  group.rotation.x = 0.02;
+  group.add(shuttle);
+  group.scale.setScalar(1.05);
 
-  return { group, coreGeometry, glowGeometry, coreMaterial, glowMaterial };
+  return { group, rocket: shuttle, disposables };
+}
+
+function frameRocket(camera, object, padding = 1.04) {
+  const box = new THREE.Box3().setFromObject(object);
+  const center = new THREE.Vector3();
+  const size = new THREE.Vector3();
+  box.getCenter(center);
+  box.getSize(size);
+
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fovRad = (camera.fov * Math.PI) / 180;
+  const distance = (maxDim / 2 / Math.tan(fovRad / 2)) * padding;
+
+  // Elevated top-down blueprint angle (matches reference composition)
+  camera.position.set(
+    center.x + distance * 0.06,
+    center.y + distance * 0.94,
+    center.z + distance * 0.32,
+  );
+  camera.lookAt(center);
+  camera.updateProjectionMatrix();
 }
 
 function createSmokeSystem() {
@@ -147,9 +210,9 @@ function createSmokeSystem() {
   const velocities = [];
 
   for (let i = 0; i < count; i += 1) {
-    positions[i * 3] = (Math.random() - 0.5) * 0.12;
-    positions[i * 3 + 1] = -0.78 - Math.random() * 0.25;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.12;
+    positions[i * 3] = (Math.random() - 0.5) * 0.28;
+    positions[i * 3 + 1] = -1.15 - Math.random() * 0.15;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.22;
     velocities.push({
       x: (Math.random() - 0.5) * 0.012,
       y: -0.018 - Math.random() * 0.02,
@@ -165,7 +228,7 @@ function createSmokeSystem() {
     color: GLOW_SOFT,
     size: 0.055,
     transparent: true,
-    opacity: 0.55,
+    opacity: 0.5,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
     sizeAttenuation: true,
@@ -194,18 +257,27 @@ function updateSmoke(smoke, dt, intensity) {
 
     if (v.life > 1) {
       v.life = 0;
-      positions[i * 3] = (Math.random() - 0.5) * 0.1;
-      positions[i * 3 + 1] = -0.78 - Math.random() * 0.08;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.1;
+      positions[i * 3] = (Math.random() - 0.5) * 0.28;
+      positions[i * 3 + 1] = -1.15 - Math.random() * 0.08;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.22;
       v.x = (Math.random() - 0.5) * 0.012;
       v.y = -0.018 - Math.random() * 0.02;
       v.z = (Math.random() - 0.5) * 0.012;
     }
   }
 
-  material.opacity = lerp(0.35, 0.75, intensity);
+  material.opacity = lerp(0.3, 0.72, intensity);
   material.size = lerp(0.05, 0.09, intensity);
   smoke.geometry.attributes.position.needsUpdate = true;
+}
+
+function disposeRocketParts(parts) {
+  parts?.disposables?.forEach(({ geometry, glowGeo, auraGeo, materials }) => {
+    geometry?.dispose();
+    glowGeo?.dispose();
+    auraGeo?.dispose();
+    materials?.forEach((m) => m.dispose());
+  });
 }
 
 export function setupLaunchRocket({ root, section, prefersReducedMotion = false }) {
@@ -232,10 +304,7 @@ export function setupLaunchRocket({ root, section, prefersReducedMotion = false 
     running = false;
     cancelAnimationFrame(frameId);
 
-    rocketParts?.coreGeometry?.dispose();
-    rocketParts?.glowGeometry?.dispose();
-    rocketParts?.coreMaterial?.dispose();
-    rocketParts?.glowMaterial?.dispose();
+    disposeRocketParts(rocketParts);
     smoke?.geometry?.dispose();
     smoke?.material?.dispose();
 
@@ -269,9 +338,7 @@ export function setupLaunchRocket({ root, section, prefersReducedMotion = false 
     if (width < 24 || height < 24) return;
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(34, width / height, 0.1, 40);
-    camera.position.set(0.55, 0.2, 3.95);
-    camera.lookAt(0, 0.15, 0);
+    camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 40);
 
     renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -283,10 +350,10 @@ export function setupLaunchRocket({ root, section, prefersReducedMotion = false 
     renderer.setClearColor(0x000000, 0);
     canvasHost.appendChild(renderer.domElement);
 
-    rocketParts = buildDotRocket();
+    rocketParts = buildWireframeRocket();
     rocketGroup = rocketParts.group;
-    rocketGroup.scale.setScalar(0.92);
     scene.add(rocketGroup);
+    frameRocket(camera, rocketGroup);
 
     const smokeSystem = createSmokeSystem();
     smoke = smokeSystem;
@@ -304,11 +371,11 @@ export function setupLaunchRocket({ root, section, prefersReducedMotion = false 
     const dt = clock.getDelta();
 
     if (rocketGroup && !prefersReducedMotion) {
-      const bob = Math.sin(elapsed * 2.4) * 0.035;
-      const sway = Math.sin(elapsed * 1.6) * 0.035;
+      const bob = Math.sin(elapsed * 2.4) * 0.03;
+      const sway = Math.sin(elapsed * 1.5) * 0.025;
       rocketGroup.position.y = bob - launchIntensity * 0.08;
+      rocketGroup.rotation.y = Math.sin(elapsed * 0.85) * 0.025;
       rocketGroup.rotation.z = sway;
-      rocketGroup.rotation.y = Math.sin(elapsed * 0.9) * 0.08;
     }
 
     if (smoke) updateSmoke(smoke, dt, launchIntensity);
@@ -357,6 +424,7 @@ export function setupLaunchRocket({ root, section, prefersReducedMotion = false 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
+    if (rocketGroup) frameRocket(camera, rocketGroup);
   });
 
   resizeObserver.observe(canvasHost);

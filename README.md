@@ -65,11 +65,13 @@ Open `http://localhost:3000` (or your port).
 
 ## Production checklist
 
-1. Run `npm run build:css` before deploy
-2. Export `assets/images/og-default.svg` to **1200×630 JPG** as `og-default.jpg` for social previews
-3. Point domain in `sitemap.xml`, canonical tags, and `seo.js` base URL
-4. Wire contact/newsletter forms to your backend or service (currently client-side UI)
-5. Configure host **404** → `404.html`
+1. Run `npm run build` before deploy (`build:css` + `vendor:copy`)
+2. Upload the **full** `assets/css/dsynz-elite.css` (~98 KB). If Network shows ~12 KB or `?v=34`, the server has an old file or stale cache — bump the `?v=` query in HTML after upload
+3. Upload `assets/vendor/` (Three.js, GSAP, Lenis) — required for 3D and scroll animations
+4. Export `assets/images/og-default.svg` to **1200×630 JPG** as `og-default.jpg` for social previews
+5. Point domain in `sitemap.xml`, canonical tags, and `seo.js` base URL
+6. Wire contact/newsletter forms to your backend or service (currently client-side UI)
+7. Configure host **404** → `404.html`
 
 ## Brand copy
 

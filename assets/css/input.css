@@ -742,6 +742,39 @@
     transition: opacity 0.9s var(--ease-premium), transform 0.9s var(--ease-premium);
   }
 
+  /* Critical fallbacks (main.css) if an outdated dsynz-elite.css is cached on the host */
+  .who-mist {
+    @apply relative overflow-hidden;
+  }
+
+  .who-mist::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 55% at 22% 48%, rgba(124, 58, 237, 0.22), transparent 62%),
+      radial-gradient(ellipse 70% 50% at 78% 52%, rgba(99, 102, 241, 0.14), transparent 65%);
+  }
+
+  .service-stage-panels {
+    position: relative;
+    min-height: 320px;
+  }
+
+  .service-stage-detail:not(.is-active) {
+    display: none !important;
+  }
+
+  .service-stage-detail.is-active {
+    display: block !important;
+  }
+
+  .service-stage-detail.is-active .service-stage-panel-inner {
+    display: block !important;
+  }
+
   .skip-link {
     @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[110] focus:rounded-lg focus:bg-brand focus:px-4 focus:py-2 focus:text-white;
   }
