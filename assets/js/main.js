@@ -12,8 +12,7 @@ const THEME_KEY = 'dsynz-theme';
 
 export function initTheme() {
   const stored = localStorage.getItem(THEME_KEY);
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDark = stored === 'dark' || (stored !== 'light' && prefersDark);
+  const isDark = stored !== 'light';
   document.documentElement.classList.toggle('dark', isDark);
   return isDark;
 }

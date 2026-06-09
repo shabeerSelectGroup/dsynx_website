@@ -9,15 +9,34 @@
 @layer base {
   :root {
     --color-brand: #7c3aed;
-    --color-brand-light: #9f67ff;
+    --color-brand-light: #a855f7;
     --color-brand-dark: #5b21b6;
-    --color-bg: #fafafa;
-    --color-bg-elevated: #ffffff;
-    --color-surface: #f4f4f5;
+    --color-bg: #f8f8fa;
+    --color-bg-elevated: #e6e6eb;
+    --color-surface: #efeff3;
     --color-text: #0a0a0a;
     --color-text-muted: #5c5c5c;
-    --color-border: rgba(0, 0, 0, 0.07);
-    --cursor-glow: rgba(124, 58, 237, 0.28);
+    --color-border: rgba(0, 0, 0, 0.09);
+    --accent-purple: #7c3aed;
+    --accent-purple-soft: rgba(124, 58, 237, 0.38);
+    --accent-purple-mist: rgba(124, 58, 237, 0.24);
+    --accent-purple-faint: rgba(124, 58, 237, 0.12);
+    --accent-purple-wave: rgba(124, 58, 237, 0.28);
+    --accent-purple-wave-soft: rgba(124, 58, 237, 0.18);
+    --accent-indigo-mist: rgba(99, 102, 241, 0.18);
+    --accent-indigo-wave: rgba(99, 102, 241, 0.14);
+    --grid-line: rgba(124, 58, 237, 0.1);
+    --grid-line-fine: rgba(124, 58, 237, 0.07);
+    --glow-section: rgba(124, 58, 237, 0.22);
+    --glow-hero-orb: rgba(124, 58, 237, 0.32);
+    --glow-hero-orb-secondary: rgba(168, 85, 247, 0.2);
+    --glow-hero-mesh-a: rgba(124, 58, 237, 0.42);
+    --glow-hero-mesh-b: rgba(168, 85, 247, 0.24);
+    --glow-hero-mesh-c: rgba(91, 33, 182, 0.28);
+    --glow-hero-mesh-d: rgba(124, 58, 237, 0.16);
+    --glow-hero-conic: rgba(124, 58, 237, 0.1);
+    --glow-hero-conic-b: rgba(168, 85, 247, 0.14);
+    --cursor-glow: rgba(124, 58, 237, 0.38);
     --glass-bg: rgba(255, 255, 255, 0.78);
     --nav-height: 5rem;
     --section-gap: clamp(5rem, 10vw, 8rem);
@@ -31,11 +50,29 @@
 
   .dark {
     --color-bg: #060606;
-    --color-bg-elevated: #0c0c0c;
-    --color-surface: #111111;
+    --color-bg-elevated: #101014;
+    --color-surface: #141418;
     --color-text: #f5f5f5;
     --color-text-muted: #8a8a8a;
     --color-border: rgba(255, 255, 255, 0.06);
+    --accent-purple-soft: rgba(124, 58, 237, 0.22);
+    --accent-purple-mist: rgba(124, 58, 237, 0.14);
+    --accent-purple-faint: rgba(124, 58, 237, 0.06);
+    --accent-purple-wave: rgba(124, 58, 237, 0.14);
+    --accent-purple-wave-soft: rgba(124, 58, 237, 0.1);
+    --accent-indigo-mist: rgba(99, 102, 241, 0.08);
+    --accent-indigo-wave: rgba(99, 102, 241, 0.08);
+    --grid-line: rgba(255, 255, 255, 0.025);
+    --grid-line-fine: rgba(255, 255, 255, 0.04);
+    --glow-section: rgba(124, 58, 237, 0.12);
+    --glow-hero-orb: rgba(124, 58, 237, 0.2);
+    --glow-hero-orb-secondary: rgba(159, 103, 255, 0.12);
+    --glow-hero-mesh-a: rgba(124, 58, 237, 0.35);
+    --glow-hero-mesh-b: rgba(159, 103, 255, 0.18);
+    --glow-hero-mesh-c: rgba(91, 33, 182, 0.22);
+    --glow-hero-mesh-d: rgba(124, 58, 237, 0.12);
+    --glow-hero-conic: rgba(124, 58, 237, 0.06);
+    --glow-hero-conic-b: rgba(159, 103, 255, 0.08);
     --glass-bg: rgba(6, 6, 6, 0.82);
     --cursor-glow: rgba(124, 58, 237, 0.22);
     --shadow-elevated: 0 32px 100px -40px rgba(0, 0, 0, 0.85);
@@ -88,9 +125,13 @@
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.45;
+  opacity: 0.25;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
+}
+
+.dark .site-noise {
+  opacity: 0.45;
 }
 
 @layer components {
@@ -151,7 +192,7 @@
 
   .section-glow {
     @apply pointer-events-none absolute -top-32 left-1/2 h-64 w-[min(100%,48rem)] -translate-x-1/2 rounded-full blur-[100px];
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.12), transparent 70%);
+    background: radial-gradient(circle, var(--glow-section), transparent 70%);
   }
 
   /* Navigation */
@@ -292,10 +333,10 @@
     top: -45%;
     left: -30%;
     background:
-      radial-gradient(ellipse 45% 35% at 25% 25%, rgba(124, 58, 237, 0.35), transparent 58%),
-      radial-gradient(ellipse 35% 45% at 75% 15%, rgba(159, 103, 255, 0.18), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 55% 75%, rgba(91, 33, 182, 0.22), transparent 52%),
-      radial-gradient(ellipse 30% 25% at 90% 60%, rgba(124, 58, 237, 0.12), transparent 50%);
+      radial-gradient(ellipse 45% 35% at 25% 25%, var(--glow-hero-mesh-a), transparent 58%),
+      radial-gradient(ellipse 35% 45% at 75% 15%, var(--glow-hero-mesh-b), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 55% 75%, var(--glow-hero-mesh-c), transparent 52%),
+      radial-gradient(ellipse 30% 25% at 90% 60%, var(--glow-hero-mesh-d), transparent 50%);
     animation: mesh-drift 22s ease-in-out infinite alternate;
     filter: blur(2px);
   }
@@ -304,20 +345,48 @@
     content: '';
     position: absolute;
     inset: -20%;
-    background: conic-gradient(from 180deg at 50% 50%, transparent, rgba(124, 58, 237, 0.06), transparent, rgba(159, 103, 255, 0.08), transparent);
+    background: conic-gradient(
+      from 180deg at 50% 50%,
+      transparent,
+      var(--glow-hero-conic),
+      transparent,
+      var(--glow-hero-conic-b),
+      transparent
+    );
     animation: mesh-rotate 60s linear infinite;
     opacity: 0.7;
   }
 
   .hero-grid {
-    @apply absolute inset-0 bg-grid-pattern bg-grid opacity-30;
+    @apply absolute inset-0 bg-grid bg-grid-pattern opacity-30;
     mask-image: linear-gradient(to bottom, black 0%, transparent 92%);
+  }
+
+  html:not(.dark) .hero-grid {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    opacity: 0.45;
   }
 
   .hero-grid-fine {
     @apply absolute inset-0 bg-grid-fine opacity-20;
     background-size: 32px 32px;
     mask-image: radial-gradient(ellipse 70% 60% at 70% 40%, black 0%, transparent 70%);
+  }
+
+  html:not(.dark) .hero-grid-fine {
+    background-image:
+      linear-gradient(var(--grid-line-fine) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line-fine) 1px, transparent 1px);
+    opacity: 0.35;
+  }
+
+  html:not(.dark) .section-grid-overlay {
+    background-image:
+      linear-gradient(var(--grid-line-fine) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line-fine) 1px, transparent 1px);
+    opacity: 0.5;
   }
 
   .hero-orb {
@@ -330,7 +399,7 @@
     height: min(420px, 50vw);
     top: 10%;
     right: 5%;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.2), transparent 68%);
+    background: radial-gradient(circle, var(--glow-hero-orb), transparent 68%);
   }
 
   .hero-orb-2 {
@@ -338,7 +407,7 @@
     height: min(280px, 35vw);
     bottom: 20%;
     left: 10%;
-    background: radial-gradient(circle, rgba(159, 103, 255, 0.12), transparent 70%);
+    background: radial-gradient(circle, var(--glow-hero-orb-secondary), transparent 70%);
     animation-delay: -6s;
   }
 
@@ -747,15 +816,15 @@
     @apply relative overflow-hidden;
   }
 
-  .who-mist::before {
+  html:not(.dark) .who-mist::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 80% 55% at 22% 48%, rgba(124, 58, 237, 0.22), transparent 62%),
-      radial-gradient(ellipse 70% 50% at 78% 52%, rgba(99, 102, 241, 0.14), transparent 65%);
+      radial-gradient(ellipse 80% 55% at 22% 48%, var(--accent-purple-faint), transparent 62%),
+      radial-gradient(ellipse 70% 50% at 78% 52%, var(--accent-indigo-mist), transparent 65%);
   }
 
   .service-stage-panels {
